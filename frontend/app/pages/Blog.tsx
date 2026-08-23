@@ -20,8 +20,8 @@ const ScrollStackItem: React.FC<ScrollStackItemProps> = ({
   itemClassName = "",
   isDark = false,
 }) => {
-  const cardBg = isDark ? "rgba(20, 16, 32, 0.92)" : "#ffffff";
-  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)";
+  const cardBg = isDark ? "rgba(255, 255, 255, 0.02)" : "#ffffff";
+  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
 
   return (
     <div
@@ -31,7 +31,7 @@ const ScrollStackItem: React.FC<ScrollStackItemProps> = ({
         border: `1px solid ${cardBorder}`,
         boxShadow: isDark
           ? "0 30px 80px rgba(0,0,0,0.45)"
-          : "0 30px 80px rgba(109,40,217,0.08)",
+          : "0 30px 80px rgba(0,0,0,0.05)",
       }}
     >
       {children}
@@ -423,26 +423,28 @@ const BLOG_POSTS: BlogPost[] = [
 ];
 
 export default function Blog({ isDark }: BlogProps) {
-  const textPrimary = isDark ? "#f5f3ff" : "#161221";
-  const textMuted = isDark ? "rgba(245,243,255,0.6)" : "rgba(22,18,33,0.6)";
-  const accent = isDark ? "#a78bfa" : "#6d28d9";
-  const tagBg = isDark ? "rgba(167,139,250,0.14)" : "rgba(109,40,217,0.08)";
-  const iconBg = isDark
-    ? "linear-gradient(135deg, #a78bfa, #7c3aed)"
-    : "linear-gradient(135deg, #a78bfa, #6d28d9)";
+  const textPrimary = isDark ? "#ffffff" : "#000000";
+  const textMuted = isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.6)";
+  const accent = isDark ? "#ffffff" : "#000000";
+  const tagBg = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
+  const iconBg = isDark ? "#ffffff" : "#000000";
+  const iconColor = isDark ? "#000000" : "#ffffff";
 
   return (
-    <div className="relative w-full isolate" style={{ zIndex: 0 }}>
+    <div className="relative w-full isolate font-[Inter]" style={{ zIndex: 0 }}>
       {/* Section heading */}
-      <div className="flex flex-col items-center justify-center px-6 pt-32 pb-4 text-center" style={{ color: textPrimary }}>
+      <div
+        className="flex flex-col items-center justify-center px-6 pt-32 pb-4 text-center"
+        style={{ color: textPrimary }}
+      >
         <ScrollFloat
           containerClassName="max-w-2xl"
-          textClassName="font-bold tracking-tight text-[clamp(1.75rem,4vw,3rem)]"
+          textClassName="font-bold tracking-[-0.04em] uppercase text-4xl sm:text-5xl lg:text-6xl leading-[1.02]"
           scrollStart="top bottom-=10%"
           scrollEnd="top center+=10%"
           animationDuration={1}
         >
-          A few thoughts from behind the  build.
+          A few thoughts from behind the build.
         </ScrollFloat>
       </div>
 
@@ -466,19 +468,25 @@ export default function Blog({ isDark }: BlogProps) {
                 <div
                   className="flex items-center justify-center w-14 h-14 rounded-2xl flex-shrink-0"
                   style={{
-                    background: iconBg,
-                    boxShadow: "0 12px 30px rgba(109,40,217,0.3)",
+                    backgroundColor: iconBg,
+                    boxShadow: isDark
+                      ? "0 12px 30px rgba(255,255,255,0.15)"
+                      : "0 12px 30px rgba(0,0,0,0.1)",
                   }}
                 >
-                  <Icon size={24} color="#ffffff" />
+                  <Icon size={24} color={iconColor} />
                 </div>
 
                 {/* Content */}
                 <div className="flex flex-col justify-center flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-3">
                     <span
-                      className="px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide"
-                      style={{ color: accent, backgroundColor: tagBg }}
+                      className="px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wide border"
+                      style={{
+                        color: textPrimary,
+                        backgroundColor: tagBg,
+                        borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
+                      }}
                     >
                       {tag}
                     </span>

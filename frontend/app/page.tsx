@@ -7,14 +7,15 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import CaseStudyListing from "./pages/caseStudyListing";
 import ContactUs from "./pages/contactUs";
-
+import FAQ from "./pages/FAQ";
 import Blog from "./pages/Blog";
+import Footer from "./components/Footer";
 // Light mode corner colors
 const LIGHT_COLORS = {
-  topLeft: "rgba(255, 229, 235, 1)",
-  topRight: "rgba(255, 255, 255, 1)",
+  topLeft: "rgba(251, 240, 240, 1)",
+  topRight: "rgba(245, 236, 236, 1)",
   bottomLeft: "rgba(255, 255, 255, 1)",
-  bottomRight: "rgba(228, 247, 252, 1)",
+  bottomRight: "rgba(255, 255, 255, 1)",
 };
 
 // Dark mode corner colors — set these to whatever you want
@@ -28,6 +29,7 @@ const DARK_COLORS = {
 export default function Home() {
   const dotsRef = useRef<HTMLDivElement>(null);
   const [isDark, setIsDark] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(0);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -50,11 +52,17 @@ export default function Home() {
   const cornerColors = isDark ? DARK_COLORS : LIGHT_COLORS;
 
   return (
+    <>
     <div
       style={{
         position: "relative",
         width: "100%",
         minHeight: "100vh",
+        // Sits above the fixed Footer (zIndex 1) so this opaque content
+        // layer fully covers it while scrolling — the footer is only
+        // revealed once the page reaches the spacer at the very end,
+        // producing the "curtain reveal" effect.
+        zIndex: 2,
         // NOTE: don't set overflowX/overflowY here. Per the CSS Overflow
         // spec, if overflow-x is anything other than "visible" while
         // overflow-y is explicitly "visible", the browser silently
@@ -72,7 +80,7 @@ export default function Home() {
       {/* Blended 4-color corners */}
       <div
         style={{
-          position: "fixed",
+          position: "absolute",
           inset: 0,
           backgroundImage: `
             radial-gradient(circle at 0% 0%, ${cornerColors.topLeft} 0%, transparent 55%),
@@ -93,7 +101,7 @@ export default function Home() {
       <div
         ref={dotsRef}
         style={{
-          position: "fixed",
+          position: "absolute",
           inset: "-40px",
           backgroundImage: `radial-gradient(${isDark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.18)"
             } 1px, transparent 1px)`,
@@ -116,78 +124,6 @@ export default function Home() {
         className="fixed top-8 left-6 h-13 w-auto object-contain z-[100] rounded-[40px]"
       />
 
-      {/* Theme toggle button */}
-      <button
-        onClick={() => setIsDark((prev) => !prev)}
-        aria-label="Toggle dark mode"
-        style={{
-          position: "fixed",
-          bottom: "24px",
-          right: "24px",
-          width: "56px",
-          height: "56px",
-          borderRadius: "50%",
-          border: "none",
-          cursor: "pointer",
-          backgroundColor: "#ffffff",
-          boxShadow: isDark
-            ? "0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)"
-            : "0 4px 16px rgba(0,0,0,0.15)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "box-shadow 0.3s ease, transform 0.2s ease",
-          zIndex: 100,
-        }}
-        onMouseDown={(e) => {
-          e.currentTarget.style.transform = "scale(0.92)";
-        }}
-        onMouseUp={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
-        }}
-      >
-        {isDark ? (
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="moonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#4a5568" />
-                <stop offset="100%" stopColor="#1a202c" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 1020.354 15.354z"
-              fill="url(#moonGradient)"
-            />
-            <circle cx="14.5" cy="9.5" r="1" fill="#2d3748" opacity="0.6" />
-            <circle cx="17" cy="14" r="0.7" fill="#2d3748" opacity="0.5" />
-            <circle cx="12.5" cy="14.5" r="0.5" fill="#2d3748" opacity="0.5" />
-          </svg>
-        ) : (
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#FFE066" />
-                <stop offset="100%" stopColor="#FFA500" />
-              </radialGradient>
-            </defs>
-            <circle cx="12" cy="12" r="5" fill="url(#sunGradient)" />
-            <g stroke="#FFA500" strokeWidth="1.8" strokeLinecap="round">
-              <line x1="12" y1="1.5" x2="12" y2="4" />
-              <line x1="12" y1="20" x2="12" y2="22.5" />
-              <line x1="1.5" y1="12" x2="4" y2="12" />
-              <line x1="20" y1="12" x2="22.5" y2="12" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-            </g>
-          </svg>
-        )}
-      </button>
-
       {/* Page content goes here */}
       <div id="home">
         <Hero isDark={isDark} />
@@ -204,9 +140,21 @@ export default function Home() {
       <div id="blog">
         <Blog isDark={isDark} />
       </div>
+      <div id="faq">
+        <FAQ isDark={isDark} />
+      </div>
       <div id="contact">
         <ContactUs isDark={isDark} />
       </div>
     </div>
+
+    {/* Reserves exactly as much scroll space as the footer's real height,
+        so the footer (fixed at the viewport bottom, zIndex 1, behind this
+        whole content layer at zIndex 2) only becomes visible once the
+        page scrolls into this empty region — the "curtain reveal". */}
+    <div style={{ height: footerHeight }} aria-hidden="true" />
+
+    <Footer isDark={isDark} onHeightChange={setFooterHeight} onToggleDark={() => setIsDark((prev) => !prev)} />
+    </>
   );
 }
