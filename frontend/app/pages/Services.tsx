@@ -103,8 +103,8 @@ const RevealOnScroll: React.FC<RevealOnScrollProps> = ({ children, className = "
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(16px)",
-        transition: `opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s`,
+        transform: visible ? "translateY(0) scale(1)" : "translateY(40px) scale(0.93)",
+        transition: `opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}s`,
         willChange: "opacity, transform",
       }}
     >

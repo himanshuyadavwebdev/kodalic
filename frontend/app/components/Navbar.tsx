@@ -6,8 +6,8 @@ const NAV_MAP = [
   { label: "Home", id: "home" },
   { label: "About us", id: "about" },
   { label: "Services", id: "services" },
-  { label: "Work", id: "work" },
-  { label: "Testimonials", id: "testimonials" },
+  { label: "Case Studies", id: "case-studies" },
+  { label: "Blog", id: "blog" },
   { label: "Contact", id: "contact" },
 ];
 
@@ -16,7 +16,7 @@ const Navbar = () => {
   const [activeSection, setActiveSection] = useState("Home");
 
   useEffect(() => {
-    const ids = ["home", "about", "services"];
+    const ids = ["home", "about", "services", "case-studies", "blog", "contact"];
     const elements = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
 
     const observer = new IntersectionObserver(

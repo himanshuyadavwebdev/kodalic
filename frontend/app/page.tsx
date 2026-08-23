@@ -5,6 +5,10 @@ import Navbar from "./components/Navbar";
 import Hero from "./pages/Hero";
 import About from "./pages/About";
 import Services from "./pages/Services";
+import CaseStudyListing from "./pages/caseStudyListing";
+import ContactUs from "./pages/contactUs";
+
+import Blog from "./pages/Blog";
 // Light mode corner colors
 const LIGHT_COLORS = {
   topLeft: "rgba(255, 229, 235, 1)",
@@ -51,8 +55,16 @@ export default function Home() {
         position: "relative",
         width: "100%",
         minHeight: "100vh",
-        overflowX: "hidden",
-        overflowY: "visible",
+        // NOTE: don't set overflowX/overflowY here. Per the CSS Overflow
+        // spec, if overflow-x is anything other than "visible" while
+        // overflow-y is explicitly "visible", the browser silently
+        // promotes overflow-y to "auto" too — turning this div into its
+        // OWN scrollable box, layered on top of the real document scroll.
+        // That's what was producing a second scrollbar across every
+        // section (not just Blog). Horizontal overflow is handled at the
+        // html/body level in globals.css instead, which doesn't have this
+        // problem since it controls the actual viewport scrollbar rather
+        // than creating a nested one.
         backgroundColor: isDark ? "#0a0a0a" : "#ffffff",
         transition: "background-color 0.5s ease",
       }}
@@ -185,6 +197,15 @@ export default function Home() {
       </div>
       <div id="services">
         <Services isDark={isDark} />
+      </div>
+      <div id="case-studies">
+        <CaseStudyListing isDark={isDark} />
+      </div>
+      <div id="blog">
+        <Blog isDark={isDark} />
+      </div>
+      <div id="contact">
+        <ContactUs isDark={isDark} />
       </div>
     </div>
   );
