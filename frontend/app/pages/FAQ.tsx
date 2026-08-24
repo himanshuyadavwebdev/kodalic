@@ -31,7 +31,7 @@ const FAQ_ITEMS: FAQItem[] = [
   {
     question: "What's included in ongoing maintenance & support?",
     answer:
-      "Monitoring, security updates, bug fixes, and small iterative improvements. Response time on critical issues is under 2 hours. Everything is covered under a simple monthly plan, no surprise invoices.",
+      "Monitoring, security updates, bug fixes, and small iterative improvements. Coverage and response times depend on the plan and scope — we outline specifics before work begins, with no surprise invoices.",
   },
   {
     question: "Can you integrate with tools we already use?",
@@ -108,20 +108,23 @@ const FAQRow: React.FC<FAQRowProps> = ({ item, isOpen, onToggle, isDark, isLast 
 
       <div
         style={{
-          maxHeight: isOpen ? `${contentRef.current?.scrollHeight ?? 400}px` : "0px",
+          display: "grid",
+          gridTemplateRows: isOpen ? "1fr" : "0fr",
           opacity: isOpen ? 1 : 0,
           overflow: "hidden",
           transition:
-            "max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease",
+            "grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease",
         }}
       >
-        <div ref={contentRef} className="pb-5 sm:pb-6 pr-10 sm:pr-14">
-          <p
-            className="text-sm sm:text-[15px] leading-relaxed"
-            style={{ color: textMuted }}
-          >
-            {item.answer}
-          </p>
+        <div className="overflow-hidden">
+          <div ref={contentRef} className="pb-5 sm:pb-6 pr-10 sm:pr-14">
+            <p
+              className="text-sm sm:text-[15px] leading-relaxed"
+              style={{ color: textMuted }}
+            >
+              {item.answer}
+            </p>
+          </div>
         </div>
       </div>
     </div>

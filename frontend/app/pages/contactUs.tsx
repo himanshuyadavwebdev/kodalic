@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Mail, Phone, MapPin, Send, CheckCircle2, type LucideIcon } from "lucide-react";
+import { Mail, MapPin, Send, CheckCircle2, type LucideIcon } from "lucide-react";
 
 interface ContactUsProps {
   isDark: boolean;
@@ -19,17 +19,14 @@ interface RevealOnScrollProps {
 
 const RevealOnScroll: React.FC<RevealOnScrollProps> = ({ children, className = "", delay = 0 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false
+  );
 
   useEffect(() => {
+    if (visible) return;
     const el = ref.current;
     if (!el) return;
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      setVisible(true);
-      return;
-    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -43,7 +40,7 @@ const RevealOnScroll: React.FC<RevealOnScrollProps> = ({ children, className = "
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [visible]);
 
   return (
     <div
@@ -78,12 +75,6 @@ const CONTACT_DETAILS: ContactDetail[] = [
     label: "Email us",
     value: "hello@kodalic.com",
     href: "mailto:hello@kodalic.com",
-  },
-  {
-    icon: Phone,
-    label: "Call us",
-    value: "+1 (555) 010-2030",
-    href: "tel:+15550102030",
   },
   {
     icon: MapPin,
@@ -223,7 +214,7 @@ export default function ContactUs({ isDark }: ContactUsProps) {
                   Reach out directly
                 </h3>
                 <p className="text-sm sm:text-[15px] leading-relaxed mb-10" style={{ color: textMuted }}>
-                  Prefer email or a quick call? We're reachable directly, no forms required.
+                  Prefer email or a quick call? We&apos;re reachable directly, no forms required.
                 </p>
 
                 <div className="flex flex-col gap-6">
@@ -267,7 +258,7 @@ export default function ContactUs({ isDark }: ContactUsProps) {
                 className="mt-12 pt-8 text-xs sm:text-sm leading-relaxed"
                 style={{ color: textMuted, borderTop: `1px solid ${border}` }}
               >
-                Typical response time: <span style={{ color: textPrimary, fontWeight: 600 }}>under 24 hours</span>
+                We aim to respond within one business day. Timelines vary by inquiry.
               </div>
             </div>
 

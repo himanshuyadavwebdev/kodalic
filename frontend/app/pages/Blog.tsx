@@ -1,5 +1,5 @@
 "use client";
-import React, { useLayoutEffect, useRef, useCallback, useState } from "react";
+import React, { useLayoutEffect, useEffect, useRef, useCallback, useState } from "react";
 import type { ReactNode } from "react";
 import Lenis from "lenis";
 import { Sparkles, Cog, Globe, type LucideIcon } from "lucide-react";
@@ -25,7 +25,7 @@ const ScrollStackItem: React.FC<ScrollStackItemProps> = ({
 
   return (
     <div
-      className={`scroll-stack-card relative w-full h-[26rem] my-8 p-10 sm:p-12 rounded-[32px] box-border origin-top will-change-transform ${itemClassName}`.trim()}
+      className={`scroll-stack-card relative w-full min-h-[22rem] sm:min-h-[26rem] my-8 p-6 sm:p-10 lg:p-12 rounded-[32px] box-border origin-top will-change-transform ${itemClassName}`.trim()}
       style={{
         backgroundColor: cardBg,
         border: `1px solid ${cardBorder}`,
@@ -75,8 +75,18 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   const animationFrameRef = useRef<number | null>(null);
   const lenisRef = useRef<Lenis | null>(null);
   const cardsRef = useRef<HTMLElement[]>([]);
-  const lastTransformsRef = useRef(new Map<number, any>());
+  const lastTransformsRef = useRef(new Map<number, { translateY: number; scale: number; rotation: number; blur: number }>());
   const isUpdatingRef = useRef(false);
+  const [reducedMotion, setReducedMotion] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false
+  );
+
+  useEffect(() => {
+    const m = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(m.matches);
+    m.addEventListener("change", update);
+    return () => m.removeEventListener("change", update);
+  }, []);
 
   const calculateProgress = useCallback((scrollTop: number, start: number, end: number) => {
     if (scrollTop < start) return 0;
@@ -126,6 +136,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   );
 
   const updateCardTransforms = useCallback(() => {
+    if (reducedMotion) return;
     if (!cardsRef.current.length || isUpdatingRef.current) return;
 
     isUpdatingRef.current = true;
@@ -231,6 +242,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     parsePercentage,
     getScrollData,
     getElementOffset,
+    reducedMotion,
   ]);
 
   const handleScroll = useCallback(() => {
@@ -238,6 +250,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   }, [updateCardTransforms]);
 
   const setupLenis = useCallback(() => {
+    if (reducedMotion) return;
     if (useWindowScroll) {
       const lenis = new Lenis({
         duration: 1.2,
@@ -291,9 +304,24 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       lenisRef.current = lenis;
       return lenis;
     }
-  }, [handleScroll, useWindowScroll]);
+  }, [handleScroll, useWindowScroll, reducedMotion]);
 
   useLayoutEffect(() => {
+    if (reducedMotion) {
+      const cards = Array.from(
+        useWindowScroll
+          ? document.querySelectorAll(".scroll-stack-card")
+          : (scrollerRef.current?.querySelectorAll(".scroll-stack-card") ?? [])
+      ) as HTMLElement[];
+      cardsRef.current = cards;
+      cards.forEach((card, i) => {
+        card.style.marginBottom = `${itemDistance}px`;
+        card.style.transform = "none";
+        card.style.filter = "none";
+        card.style.willChange = "auto";
+      });
+      return;
+    }
     if (!useWindowScroll && !scrollerRef.current) return;
 
     const cards = Array.from(
@@ -345,12 +373,13 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     onStackComplete,
     setupLenis,
     updateCardTransforms,
+    reducedMotion,
   ]);
 
   if (useWindowScroll) {
     return (
       <div className={`relative w-full ${className}`.trim()} ref={scrollerRef}>
-        <div className="scroll-stack-inner pt-[20vh] px-20 pb-[70rem]">
+        <div className="scroll-stack-inner pt-[20vh] px-6 sm:px-10 lg:px-20 pb-32 sm:pb-48 lg:pb-64">
           {children}
           <div className="scroll-stack-end w-full h-px" />
         </div>
@@ -371,7 +400,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
         willChange: "scroll-position",
       }}
     >
-      <div className="scroll-stack-inner pt-[20vh] px-20 pb-[70rem] min-h-screen">
+      <div className="scroll-stack-inner pt-[20vh] px-6 sm:px-10 lg:px-20 pb-32 sm:pb-48 lg:pb-64 min-h-screen">
         {children}
         <div className="scroll-stack-end w-full h-px" />
       </div>

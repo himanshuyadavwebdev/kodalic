@@ -93,12 +93,15 @@ const CaseStudyListing = ({ isDark }: CaseStudyListingProps) => {
         <div className="relative w-full overflow-x-hidden overflow-y-visible">
       {/* Heading */}
       <div className="flex flex-col items-center justify-center px-6 pt-24 pb-8 text-center">
-        <h1
+        <h2
           className="font-bold tracking-tight text-[clamp(1.75rem,4vw,3rem)] max-w-2xl"
           style={{ color: textPrimary }}
         >
           Real results, real businesses.
-        </h1>
+        </h2>
+        <p className="mt-3 text-xs font-medium uppercase tracking-widest" style={{ color: textMuted }}>
+          Illustrative examples — replace images and copy with verified projects
+        </p>
       </div>
 
       {/* Showcase */}
@@ -116,13 +119,17 @@ const CaseStudyListing = ({ isDark }: CaseStudyListingProps) => {
           }}
         >
           <div className="flex flex-col md:flex-row items-stretch">
-            {/* Image */}
-            <div className="w-full md:w-1/2 aspect-[16/9] md:aspect-auto md:h-[320px]">
+            {/* Image — placeholder treatment */}
+            <div className="relative w-full md:w-1/2 aspect-[16/9] md:aspect-auto md:h-[320px]">
               <img
                 src={big.image}
-                alt={big.heading}
+                alt=""
+                aria-hidden="true"
                 className="w-full h-full object-cover"
               />
+              <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur">
+                Placeholder — replace with project screenshot
+              </span>
             </div>
 
             {/* Content */}
@@ -178,12 +185,16 @@ const CaseStudyListing = ({ isDark }: CaseStudyListingProps) => {
                     : "0 14px 36px rgba(109,40,217,0.06)",
                 }}
               >
-                <div className="w-full aspect-[4/3] overflow-hidden">
+                <div className="relative w-full aspect-[4/3] overflow-hidden">
                   <img
                     src={item.image}
-                    alt={item.heading}
+                    alt=""
+                    aria-hidden="true"
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
+                  <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
+                    Placeholder
+                  </span>
                 </div>
                 <div className="p-2.5 sm:p-3">
                   <h3

@@ -32,6 +32,7 @@ export default function Home() {
   const [footerHeight, setFooterHeight] = useState(0);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const handleMouseMove = (e: MouseEvent) => {
       const { innerWidth, innerHeight } = window;
       const x = (e.clientX / innerWidth - 0.5) * 2;
@@ -115,14 +116,7 @@ export default function Home() {
         }}
       />
 
-      <Navbar />
-
-      {/* Logo */}
-      <img
-        src="/logo.png"
-        alt="Logo"
-        className="fixed top-8 left-6 h-13 w-auto object-contain z-[100] rounded-[40px]"
-      />
+      <Navbar isDark={isDark} />
 
       {/* Page content goes here */}
       <div id="home">
