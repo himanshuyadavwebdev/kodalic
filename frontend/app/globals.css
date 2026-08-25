@@ -133,9 +133,53 @@ body {
 
   body {
     @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+  }
+
+  :focus-visible {
+    outline: 2px solid oklch(0.6 0.15 264);
+    outline-offset: 2px;
+  }
+}
+
+@theme inline {
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-premium-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-micro: 200ms;
+  --duration-card: 320ms;
+  --duration-section: 640ms;
+  --nav-height: 64px;
+}
+
+@layer utilities {
+  .container-premium {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 640px) {
+    .container-premium { padding-inline: 2.5rem; }
+  }
+  @media (min-width: 1024px) {
+    .container-premium { padding-inline: 5rem; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

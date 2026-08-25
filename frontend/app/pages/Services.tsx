@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Globe, Cog, Sparkles, LayoutGrid, Wrench, type LucideIcon } from "lucide-react";
+import { DEMO_MODE, DEMO_STATS } from "../data/demoData";
 
 interface ServicesProps {
   isDark: boolean;
@@ -11,8 +12,7 @@ interface Service {
   icon: LucideIcon;
   title: string;
   description: string;
-  chipLabel: string;
-  chipValue: string;
+  href?: string;
 }
 
 const SERVICES: Service[] = [
@@ -21,40 +21,30 @@ const SERVICES: Service[] = [
     title: "Website Development",
     description:
       "Fast, modern sites built to convert. Launch in weeks, not months. Optimized for speed and search from day one.",
-    chipLabel: "Live",
-    chipValue: "99.9% Uptime",
   },
   {
     icon: Cog,
     title: "Business Automation",
     description:
       "Workflows that run themselves. Cut manual work, reduce errors, and free your team to focus on what matters.",
-    chipLabel: "Saved",
-    chipValue: "32 hrs/week",
   },
   {
     icon: Sparkles,
     title: "AI Solutions",
     description:
       "Practical AI, built into your product. From chatbots to smart automations, deployed where it actually helps.",
-    chipLabel: "Powered by",
-    chipValue: "AI Engine",
   },
   {
     icon: LayoutGrid,
     title: "Digital Solutions",
     description:
       "Tools tailored to how you work. Custom dashboards, internal apps, and integrations built around your process.",
-    chipLabel: "Custom",
-    chipValue: "Built for you",
   },
   {
     icon: Wrench,
     title: "Maintenance & Support",
     description:
-      "Always on, always covered. Ongoing updates, monitoring, and support so your product keeps running smoothly.",
-    chipLabel: "Response",
-    chipValue: "< 2 hrs",
+      "Ongoing updates, monitoring, and support so your product keeps running smoothly. Coverage depends on plan and scope.",
   },
 ];
 
@@ -71,17 +61,14 @@ interface RevealOnScrollProps {
 
 const RevealOnScroll: React.FC<RevealOnScrollProps> = ({ children, className = "", delay = 0 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false
+  );
 
   useEffect(() => {
+    if (visible) return;
     const el = ref.current;
     if (!el) return;
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      setVisible(true);
-      return;
-    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -95,7 +82,7 @@ const RevealOnScroll: React.FC<RevealOnScrollProps> = ({ children, className = "
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [visible]);
 
   return (
     <div
@@ -113,18 +100,57 @@ const RevealOnScroll: React.FC<RevealOnScrollProps> = ({ children, className = "
   );
 };
 
+const DemoCountUp: React.FC<{ value: number }> = ({ value }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [display, setDisplay] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplay(value);
+      setHasAnimated(true);
+      return;
+    }
+    const el = ref.current?.parentElement;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          const start = performance.now();
+          const duration = 1100;
+          const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+          const animate = (now: number) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            setDisplay(Math.round(ease(progress) * value));
+            if (progress < 1) requestAnimationFrame(animate);
+          };
+          requestAnimationFrame(animate);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value, hasAnimated]);
+
+  return (
+    <span ref={ref} aria-hidden="true">
+      {display}
+    </span>
+  );
+};
+
 /* -------------------------------------------------------------------------- */
 /*  Services                                                                   */
 /* -------------------------------------------------------------------------- */
 
 export default function Services({ isDark }: ServicesProps) {
-  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)";
   const textPrimary = isDark ? "#f5f3ff" : "#161221";
   const textMuted = isDark ? "rgba(245,243,255,0.55)" : "rgba(22,18,33,0.55)";
-
   const iconTileBg = isDark ? "rgba(167,139,250,0.14)" : "rgba(109,40,217,0.08)";
-  const chipBg = isDark ? "rgba(255,255,255,0.06)" : "#ffffff";
-  const chipBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)";
 
   return (
     <div className="relative w-full">
@@ -139,79 +165,65 @@ export default function Services({ isDark }: ServicesProps) {
         </h2>
       </div>
 
-      {/* Service rows — split card layout, alternating sides */}
       <div className="flex flex-col gap-10 px-6 sm:px-10 lg:px-20 pb-32 max-w-6xl mx-auto">
-        {SERVICES.map(({ icon: Icon, title, description, chipLabel, chipValue }, i) => {
+        {SERVICES.map(({ icon: Icon, title, description, href }, i) => {
           const reversed = i % 2 === 1;
           return (
             <RevealOnScroll key={title}>
               <div
-                className="relative w-full rounded-[32px] overflow-hidden"
+                className="group relative w-full rounded-[32px] overflow-hidden border transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 will-change-transform"
+                style={{
+                  borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)",
+                  background: isDark ? "rgba(255,255,255,0.02)" : "#ffffff",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = isDark ? "rgba(167,139,250,0.18)" : "rgba(109,40,217,0.12)";
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = isDark ? "0 20px 50px rgba(167,139,250,0.12)" : "0 20px 50px rgba(109,40,217,0.10)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.borderColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
+                }}
               >
-                <div
-                  className={`flex flex-col ${
-                    reversed ? "md:flex-row-reverse" : "md:flex-row"
-                  } items-center gap-8 md:gap-4 p-8 md:p-12`}
-                >
-                  {/* Left: text content */}
+                <div className={`flex flex-col ${reversed ? "md:flex-row-reverse" : "md:flex-row"} items-center gap-8 md:gap-4 p-8 md:p-12`}>
                   <div className="w-full md:w-1/2 flex flex-col items-start">
-                    <span
-                      className="mb-4 px-4 py-1.5 rounded-full text-xs font-semibold"
-                      style={{
-                  
-                        backgroundColor: iconTileBg,
-                      }}
-                    >
-                    </span>
-                    <h3
-                      className="font-bold text-2xl sm:text-3xl mb-3 tracking-tight leading-tight"
-                      style={{ color: textPrimary }}
-                    >
+                    <h3 className="font-bold text-2xl sm:text-3xl mb-3 tracking-tight leading-tight" style={{ color: textPrimary }}>
                       {title}
                     </h3>
-                    <p
-                      className="text-[15px] sm:text-base leading-relaxed max-w-md"
-                      style={{ color: textMuted }}
-                    >
+                    <p className="text-[15px] sm:text-base leading-relaxed max-w-md" style={{ color: textMuted }}>
                       {description}
                     </p>
+                    {href ? (
+                      <a
+                        href={href}
+                        className="mt-4 inline-flex items-center gap-1 text-sm font-medium transition-colors duration-200 focus-visible:outline-offset-2"
+                        style={{ color: isDark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.45)" }}
+                      >
+                        <span className="group-hover:text-black/80">Learn more</span>
+                        <span className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden>
+                          →
+                        </span>
+                      </a>
+                    ) : (
+                      <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium" style={{ color: isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.35)" }} aria-hidden="true">
+                        Learn more <span className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden>→</span>
+                      </span>
+                    )}
                   </div>
 
-                  {/* Right: visual panel with floating chip */}
                   <div className="w-full md:w-1/2 flex items-center justify-center">
                     <div
-                      className="relative w-full max-w-sm rounded-[28px] flex flex-col items-center justify-center py-14 px-6 bg-white"
+                      className="relative w-full max-w-sm rounded-[28px] flex flex-col items-center justify-center py-14 px-6 transition-colors duration-300"
+                      style={{ background: isDark ? "rgba(255,255,255,0.03)" : "#f9f9fb", border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"}` }}
                     >
                       <div
-                        className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-medium shadow-md"
-                        style={{
-                          backgroundColor: chipBg,
-                          border: `1px solid ${chipBorder}`,
-                          color: textPrimary,
-                        }}
-                      >
-                        <span
-                          className="flex items-center justify-center w-6 h-6 rounded-full"
-                          style={{ backgroundColor: iconTileBg }}
-                        >
-                          <Icon size={13}  />
-                        </span>
-                        <span style={{ color: textMuted }}>{chipLabel}</span>
-                        <span style={{ color: textPrimary }} className="font-semibold">
-                          {chipValue}
-                        </span>
-                      </div>
-
-                      <div
-                        className="flex items-center justify-center w-24 h-24 rounded-3xl mt-10"
+                        className="flex items-center justify-center w-24 h-24 rounded-3xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03] group-hover:rotate-[1.5deg]"
                         style={{
                           backgroundColor: iconTileBg,
-                          boxShadow: isDark
-                            ? "0 20px 50px rgba(167,139,250,0.15)"
-                            : "0 20px 50px rgba(109,40,217,0.15)",
+                          boxShadow: isDark ? "0 20px 50px rgba(167,139,250,0.15)" : "0 20px 50px rgba(109,40,217,0.12)",
                         }}
                       >
-                        <Icon size={40}      />
+                        <Icon size={36} className="transition-transform duration-300 group-hover:scale-105" />
                       </div>
                     </div>
                   </div>
@@ -221,6 +233,32 @@ export default function Services({ isDark }: ServicesProps) {
           );
         })}
       </div>
+      {DEMO_MODE && (
+        <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-20 pb-20">
+          <div className="mb-6 flex justify-center">
+            <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700">
+              DEMO STATISTICS — Replace with verified Kodalic numbers
+            </span>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {DEMO_STATS.map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-[20px] border bg-white p-6 text-center"
+                style={{ borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" }}
+              >
+                <div className="text-3xl font-extrabold" style={{ color: isDark ? "#a78bfa" : "#6d28d9" }}>
+                  <DemoCountUp value={stat.value} />
+                  {stat.suffix}
+                </div>
+                <div className="mt-2 text-xs font-semibold uppercase tracking-wide" style={{ color: textMuted }}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

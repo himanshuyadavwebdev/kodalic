@@ -1,90 +1,113 @@
 "use client";
 
 import React from "react";
-import DriftWall from "../components/DriftWall";
 
 interface AboutProps {
   isDark?: boolean;
 }
 
-const items = [
-  { image: "https://picsum.photos/id/1015/600/400", title: "Peaks" },
-  { image: "https://picsum.photos/id/1025/600/400", title: "Pup" },
-  { image: "https://picsum.photos/id/1039/600/400", title: "Falls" },
-  { image: "https://picsum.photos/id/1043/600/400", title: "Dunes" },
-  { image: "https://picsum.photos/id/1044/600/400", title: "Coast" },
-  { image: "https://picsum.photos/id/1050/600/400", title: "Ridge" },
-];
+export default function About({ isDark = false }: AboutProps) {
+  const textPrimary = isDark ? "#ffffff" : "#0a1128";
+  const textMuted = isDark ? "rgba(255,255,255,0.65)" : "#52525b";
+  const cardBg = isDark ? "rgba(255,255,255,0.04)" : "#ffffff";
+  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)";
+  const subtleBg = isDark ? "#0f0f12" : "#f9f9fb";
 
-const About = ({ isDark = false }: AboutProps) => {
   return (
-    <section className="relative z-10 w-full flex flex-col md:flex-row items-stretch min-h-screen font-[Inter]">
-      {/* Left: DriftWall visual */}
-      <div className="w-full md:w-1/2 h-[400px] md:h-auto">
-        <DriftWall
-          items={items}
-          columns={3}
-          tileWidth={224}
-          tileHeight={132}
-          gap={24}
-          tilt={10}
-          turn={15}
-          perspective={1250}
-          depth={120}
-          speed={32}
-          direction="up"
-          variance={0.45}
-          parallax={0}
-          lift={52}
-          fade={0.55}
-          dim={0.55}
-          overlayColor={isDark ? "#1a0a2e" : "#8f8f8f"}
-          radius={13}
-          roll={0}
-          pauseOnHover={false}
-          grayscale={isDark ? true : false}
-        />
-      </div>
+    <section className="relative z-10 w-full bg-white font-[Inter] dark:bg-[#0a0a0a]" style={{ background: isDark ? "#0a0a0a" : "#ffffff" }}>
+      <div className="mx-auto max-w-[1280px] px-6 sm:px-8 lg:px-10">
+        <div className="flex flex-col md:flex-row items-stretch gap-10 md:gap-12 py-16 md:py-24 lg:py-28">
+          <div className="w-full md:w-[48%]">
+            <div
+              className="relative overflow-hidden rounded-[28px] border p-6 sm:p-8"
+              style={{ background: subtleBg, borderColor: cardBorder }}
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -top-24 -right-24 h-[320px] w-[320px] rounded-full blur-3xl opacity-60"
+                style={{
+                  background: isDark
+                    ? "radial-gradient(closest-side, rgba(79,70,229,0.18), transparent 70%)"
+                    : "radial-gradient(closest-side, rgba(79,70,229,0.10), transparent 70%)",
+                }}
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -bottom-24 -left-24 h-[280px] w-[280px] rounded-full blur-3xl opacity-60"
+                style={{
+                  background: isDark
+                    ? "radial-gradient(closest-side, rgba(20,184,166,0.14), transparent 70%)"
+                    : "radial-gradient(closest-side, rgba(20,184,166,0.08), transparent 70%)",
+                }}
+              />
 
-      {/* Right: About content */}
-      <div className="relative z-10 w-full md:w-1/2 flex flex-col justify-center px-8 md:px-12 py-12">
-        {/* Heading */}
-        <h2 
-  className={`text-4xl md:text-5xl font-extrabold leading-tight uppercase ${
-    isDark ? "text-white" : "text-[#0a1128]" 
-  }`} 
->
-  Technology solutions 
-  <br /> 
-  built around real 
-  <br /> 
-  business needs. 
-</h2>
-        {/* Divider accent */}
-        <div className="w-14 h-1 bg-cyan-400 rounded-full mt-6 mb-8" />
+              <div className="relative flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#0a1128] dark:bg-white" style={{ background: isDark ? "#ffffff" : "#0a1128" }} />
+                  <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: textMuted }}>
+                    How we work
+                  </span>
+                </div>
 
-        {/* Description */}
-        <p
-          className={`text-base md:text-lg leading-relaxed mb-4 ${
-            isDark ? "text-white/70" : "text-gray-600"
-          }`}
-        >
-          Kodalic is a technology solutions company helping businesses turn
-          ideas, challenges, and opportunities into practical digital
-          solutions.
-        </p>
-        <p
-          className={`text-base md:text-lg leading-relaxed mb-10 ${
-            isDark ? "text-white/70" : "text-gray-600"
-          }`}
-        >
-          We combine software engineering, AI, automation, and product
-          development to create reliable technology that improves how
-          businesses operate, connect, and grow.
-        </p>
+                <div className="grid grid-cols-1 gap-4 mt-2">
+                  {[
+                    { k: "Discover", d: "Understand goals, constraints, and real business impact." },
+                    { k: "Build", d: "Ship fast, practical systems with long-term maintainability." },
+                    { k: "Evolve", d: "Iterate and support so technology keeps improving." },
+                  ].map((s) => (
+                    <div
+                      key={s.k}
+                      className="rounded-2xl border px-5 py-5"
+                      style={{ background: cardBg, borderColor: cardBorder }}
+                    >
+                      <div className="text-sm font-semibold tracking-[-0.01em]" style={{ color: textPrimary }}>
+                        {s.k}
+                      </div>
+                      <div className="mt-1 text-sm leading-relaxed" style={{ color: textMuted }}>
+                        {s.d}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  className="mt-2 rounded-2xl border px-5 py-4 flex items-center justify-between"
+                  style={{ background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)", borderColor: cardBorder }}
+                >
+                  <span className="text-xs font-medium" style={{ color: textMuted }}>
+                    Real work lives in Case Studies — no placeholder imagery.
+                  </span>
+                  <span className="h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: isDark ? "#ffffff" : "#0a1128", color: isDark ? "#0a0a0a" : "#ffffff" }}>
+                    →
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative z-10 w-full md:w-[52%] flex flex-col justify-center">
+            <h2
+              className="text-[clamp(2rem,4.5vw,2.75rem)] font-[750] leading-[1.05] tracking-[-0.03em] uppercase"
+              style={{ color: textPrimary }}
+            >
+              Technology solutions
+              <br />
+              built around real
+              <br />
+              business needs.
+            </h2>
+            <div className="mt-6 w-14 h-1 bg-cyan-400 rounded-full" />
+            <p className="mt-8 text-[15px] md:text-base leading-relaxed" style={{ color: textMuted }}>
+              Kodalic is a technology solutions company helping businesses turn ideas, challenges,
+              and opportunities into practical digital solutions.
+            </p>
+            <p className="mt-4 text-[15px] md:text-base leading-relaxed" style={{ color: textMuted }}>
+              We combine software engineering, AI, automation, and product development to create
+              reliable technology that improves how businesses operate, connect, and grow.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
-};
-
-export default About;
+}
