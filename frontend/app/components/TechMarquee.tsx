@@ -30,7 +30,7 @@ export default function TechMarquee() {
           <div className="flex items-center gap-10 whitespace-nowrap will-change-transform" style={{ animation: "marquee 32s linear infinite" }}>
             {items.map((tech, i) => (
               <div key={`${tech.name}-${i}`} className="flex items-center gap-2 px-4 py-2 rounded-full border border-black/[0.06] bg-white text-sm font-medium text-black/60">
-                {tech.logo ? <img src={tech.logo} alt={tech.name} className="h-4 w-4 object-contain grayscale opacity-60" /> : null}
+                {"logo" in tech && tech.logo ? (   <img src={tech.logo} alt={tech.name} className="h-4 w-4 object-contain grayscale opacity-60" /> ) : null}
                 <span>{tech.name}</span>
               </div>
             ))}
