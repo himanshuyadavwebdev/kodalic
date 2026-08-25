@@ -83,14 +83,14 @@ export default function Hero({ isDark = false }: HeroProps) {
             >
               Engineering what
               <br />
-              <span className="inline-flex items-baseline gap-2">
+              <span className="inline-flex items-center gap-3 sm:gap-3.5">
                 businesses
-                <span className="relative inline-flex h-[0.72em] w-[1.05em] items-center justify-center overflow-hidden rounded-xl bg-white/[0.08] ring-1 ring-white/10 backdrop-blur">
+                <span className="relative inline-flex h-[0.72em] w-[calc(1.05em+8px)] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white/[0.08] ring-1 ring-white/10 backdrop-blur translate-y-[0.06em] -mx-[4px]">
                   <img
                     src="/stack.png"
                     alt=""
                     aria-hidden
-                    className="h-full w-full object-cover opacity-90"
+                    className="h-full w-full object-contain opacity-90"
                   />
                 </span>
               </span>

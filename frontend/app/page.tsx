@@ -10,6 +10,9 @@ import ContactUs from "./pages/contactUs";
 import FAQ from "./pages/FAQ";
 import Blog from "./pages/Blog";
 import Footer from "./components/Footer";
+import TechMarquee from "./components/TechMarquee";
+import Testimonials from "./components/Testimonials";
+import ScrollProgress from "./components/ScrollProgress";
 // Light mode corner colors
 const LIGHT_COLORS = {
   topLeft: "rgba(251, 240, 240, 1)",
@@ -117,6 +120,7 @@ export default function Home() {
       />
 
       <Navbar isDark={isDark} />
+      <ScrollProgress />
 
       {/* Page content goes here */}
       <div id="home">
@@ -125,12 +129,14 @@ export default function Home() {
       <div id="about">
         <About isDark={isDark} />
       </div>
+      <TechMarquee />
       <div id="services">
         <Services isDark={isDark} />
       </div>
       <div id="case-studies">
         <CaseStudyListing isDark={isDark} />
       </div>
+      <Testimonials />
       <div id="blog">
         <Blog isDark={isDark} />
       </div>
