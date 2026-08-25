@@ -30,7 +30,8 @@ export default function Testimonials() {
     return () => m.removeEventListener("change", update);
   }, []);
 
-  const source = DEMO_MODE && TESTIMONIALS.length === 0 ? DEMO_TESTIMONIALS : TESTIMONIALS;
+  const source =
+    DEMO_MODE && TESTIMONIALS.length === 0 ? DEMO_TESTIMONIALS : TESTIMONIALS;
   if (source.length === 0) return null;
   const list = DEMO_MODE ? source : source.filter((t) => t.verified);
   if (list.length === 0) return null;
@@ -76,19 +77,35 @@ export default function Testimonials() {
         )}
         <div
           className="rounded-[32px] border bg-white p-8 sm:p-12"
-          style={{ borderColor: "rgba(0,0,0,0.06)", boxShadow: "0 20px 50px rgba(0,0,0,0.04)" }}
+          style={{
+            borderColor: "rgba(0,0,0,0.06)",
+            boxShadow: "0 20px 50px rgba(0,0,0,0.04)",
+          }}
         >
-          <div className="mb-6 text-5xl font-serif leading-none text-black/10" aria-hidden>
+          <div
+            className="mb-6 text-5xl font-serif leading-none text-black/10"
+            aria-hidden
+          >
             “
           </div>
-          <blockquote className="text-lg sm:text-xl leading-relaxed" style={{ color: "#161221" }}>
+          <blockquote
+            className="text-lg sm:text-xl leading-relaxed"
+            style={{ color: "#161221" }}
+          >
             {current.quote}
           </blockquote>
           <div className="mt-8 flex flex-col items-center gap-3">
-            {current.avatar ? (
-              <img src={current.avatar} alt={current.name} className="h-10 w-10 rounded-full object-cover" />
+            {"avatar" in current && current.avatar ? (
+              <img
+                src={current.avatar}
+                alt={current.name}
+                className="h-10 w-10 rounded-full object-cover"
+              />
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-xs font-semibold text-white" aria-hidden>
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-xs font-semibold text-white"
+                aria-hidden
+              >
                 {current.name
                   .split(" ")
                   .map((n) => n[0])
@@ -97,15 +114,28 @@ export default function Testimonials() {
               </div>
             )}
             <div>
-              <div className="text-sm font-semibold" style={{ color: "#161221" }}>
+              <div
+                className="text-sm font-semibold"
+                style={{ color: "#161221" }}
+              >
                 {current.name}
               </div>
               <div className="text-xs" style={{ color: "rgba(22,18,33,0.55)" }}>
                 {current.role} {current.company ? `· ${current.company}` : ""}
               </div>
-              {current.demo && <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-amber-600">DEMO CLIENT</div>}
+              {current.demo && (
+                <div className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-amber-600">
+                  DEMO CLIENT
+                </div>
+              )}
             </div>
-            {current.logo ? <img src={current.logo} alt={current.company} className="mt-2 h-6 object-contain grayscale opacity-60" /> : null}
+            {"logo" in current && current.logo ? (
+              <img
+                src={current.logo}
+                alt={current.company}
+                className="mt-2 h-6 object-contain grayscale opacity-60"
+              />
+            ) : null}
           </div>
         </div>
         <div className="mt-6 flex items-center justify-center gap-3">
@@ -127,7 +157,9 @@ export default function Testimonials() {
       </div>
       <style jsx>{`
         @media (prefers-reduced-motion: reduce) {
-          div { transition: none !important; }
+          div {
+            transition: none !important;
+          }
         }
       `}</style>
     </section>
