@@ -17,7 +17,7 @@ interface VerifiedTestimonial {
 
 const TESTIMONIALS: VerifiedTestimonial[] = [];
 
-export default function Testimonials() {
+export default function Testimonials({ isDark = false }: { isDark?: boolean }) {
   const [index, setIndex] = useState(0);
   const [reduced, setReduced] = useState(false);
   const touchStartX = useRef<number | null>(null);
@@ -61,7 +61,7 @@ export default function Testimonials() {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-white py-16 sm:py-24"
+      className="relative w-full overflow-hidden bg-background py-16 sm:py-24"
       aria-label="Testimonials"
       onKeyDown={onKeyDown}
       onTouchStart={onTouchStart}
@@ -76,21 +76,21 @@ export default function Testimonials() {
           </div>
         )}
         <div
-          className="rounded-[32px] border bg-white p-8 sm:p-12"
+          className="rounded-[32px] border bg-card p-8 sm:p-12"
           style={{
-            borderColor: "rgba(0,0,0,0.06)",
+            borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
             boxShadow: "0 20px 50px rgba(0,0,0,0.04)",
           }}
         >
           <div
-            className="mb-6 text-5xl font-serif leading-none text-black/10"
+            className="mb-6 text-5xl font-serif leading-none text-black/10 dark:text-white/10"
             aria-hidden
           >
             “
           </div>
           <blockquote
             className="text-lg sm:text-xl leading-relaxed"
-            style={{ color: "#161221" }}
+            style={{ color: isDark ? "#ffffff" : "#161221" }}
           >
             {current.quote}
           </blockquote>
@@ -116,11 +116,11 @@ export default function Testimonials() {
             <div>
               <div
                 className="text-sm font-semibold"
-                style={{ color: "#161221" }}
+                style={{ color: isDark ? "#ffffff" : "#161221" }}
               >
                 {current.name}
               </div>
-              <div className="text-xs" style={{ color: "rgba(22,18,33,0.55)" }}>
+              <div className="text-xs" style={{ color: isDark ? "rgba(255,255,255,0.6)" : "rgba(22,18,33,0.55)" }}>
                 {current.role} {current.company ? `· ${current.company}` : ""}
               </div>
               {current.demo && (
@@ -142,14 +142,14 @@ export default function Testimonials() {
           <button
             onClick={prev}
             aria-label="Previous testimonial"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
           >
             ←
           </button>
           <button
             onClick={next}
             aria-label="Next testimonial"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
           >
             →
           </button>

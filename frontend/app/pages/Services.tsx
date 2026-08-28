@@ -244,7 +244,7 @@ export default function Services({ isDark }: ServicesProps) {
             {DEMO_STATS.map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-[20px] border bg-white p-6 text-center"
+                className="rounded-[20px] border bg-white p-6 text-center dark:bg-white/[0.03]"
                 style={{ borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" }}
               >
                 <div className="text-3xl font-extrabold" style={{ color: isDark ? "#a78bfa" : "#6d28d9" }}>

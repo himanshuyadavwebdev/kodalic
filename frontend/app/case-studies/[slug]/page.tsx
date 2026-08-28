@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, use } from "react";
+import React, { use } from "react";
 import Link from "next/link";
 import { ArrowLeft, Search, Home, RefreshCw, LineChart } from "lucide-react";
+import { useTheme } from "../../theme-provider";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -76,13 +77,13 @@ const CASE_STUDY_DETAILS: Record<string, CaseStudyDetail> = {
 
 export default function CaseStudyDetailPage({ params }: PageProps) {
   const { slug } = use(params);
-  const [isDark, setIsDark] = useState(false);
+  const { isDark, toggleDark } = useTheme();
   const data = CASE_STUDY_DETAILS[slug];
 
   const textPrimary = isDark ? "#f5f3ff" : "#161221";
   const textMuted = isDark ? "rgba(245,243,255,0.6)" : "rgba(22,18,33,0.6)";
   const accent = isDark ? "#a78bfa" : "#6d28d9";
-  const cardBg = isDark ? "rgba(20, 16, 32, 0.85)" : "#ffffff";
+  const cardBg = isDark ? "rgba(255,255,255,0.03)" : "#ffffff";
   const border = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)";
 
   if (!data) {
@@ -118,11 +119,11 @@ export default function CaseStudyDetailPage({ params }: PageProps) {
         </Link>
 
         <button
-          onClick={() => setIsDark((prev) => !prev)}
+          onClick={toggleDark}
           aria-label="Toggle dark mode"
           className="w-11 h-11 rounded-full flex items-center justify-center transition-shadow"
           style={{
-            backgroundColor: "#ffffff",
+            backgroundColor: isDark ? "#1a2238" : "#ffffff",
             boxShadow: isDark
               ? "0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)"
               : "0 4px 16px rgba(0,0,0,0.15)",

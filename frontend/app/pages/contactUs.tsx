@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Mail, MapPin, Phone, Send, CheckCircle2, type LucideIcon } from "lucide-react";
-import { DEMO_MODE, DEMO_CONTACT, DEMO_SOCIALS } from "../data/demoData";
+import { Mail, MapPin, Send, CheckCircle2, type LucideIcon } from "lucide-react";
+import { DEMO_MODE } from "../data/demoData";
 
 interface ContactUsProps {
   isDark: boolean;
@@ -74,17 +74,31 @@ interface ContactDetail {
 const CONTACT_DETAILS: ContactDetail[] = [
   {
     icon: Mail,
-    label: "Email us",
-    value: "hello@kodalic.com",
-    href: "mailto:hello@kodalic.com",
-    verified: false,
+    label: "Email",
+    value: "info@kodalic.com",
+    href: "mailto:info@kodalic.com",
+    verified: true,
+  },
+  {
+    icon: Mail,
+    label: "Founder — Aayush Sahu",
+    value: "aayushsahu35491@gmail.com",
+    href: "mailto:aayushsahu35491@gmail.com",
+    verified: true,
+  },
+  {
+    icon: Mail,
+    label: "Manager — Mukul Joshi",
+    value: "mukuljoshi318@gmail.com",
+    href: "mailto:mukuljoshi318@gmail.com",
+    verified: true,
   },
   {
     icon: MapPin,
-    label: "Find us",
+    label: "Location",
     value: "Remote-first, working worldwide",
     href: "#",
-    verified: false,
+    verified: true,
   },
 ];
 
@@ -228,103 +242,26 @@ export default function ContactUs({ isDark }: ContactUsProps) {
                 </p>
 
                 <div className="flex flex-col gap-6">
-                  {DEMO_MODE ? (
-                    <>
-                      <a href={`mailto:${DEMO_CONTACT.email}`} className="flex items-start gap-4 group">
-                        <div className="flex items-center justify-center w-11 h-11 rounded-2xl flex-shrink-0 transition-transform duration-200 group-hover:scale-105" style={{ backgroundColor: iconBg, boxShadow: isDark ? "0 12px 30px rgba(255,255,255,0.15)" : "0 12px 30px rgba(0,0,0,0.1)" }}>
-                          <Mail size={18} color={iconColor} />
+                  {CONTACT_DETAILS.map(({ icon: Icon, label, value, href }) => (
+                    <a key={label} href={href} className="flex items-start gap-4 group">
+                      <div className="flex items-center justify-center w-11 h-11 rounded-2xl flex-shrink-0 transition-transform duration-200 group-hover:scale-105" style={{ backgroundColor: iconBg, boxShadow: isDark ? "0 12px 30px rgba(255,255,255,0.15)" : "0 12px 30px rgba(0,0,0,0.1)" }}>
+                        <Icon size={18} color={iconColor} />
+                      </div>
+                      <div>
+                        <div className="text-xs font-medium uppercase tracking-wide mb-0.5" style={{ color: textMuted }}>
+                          {label}
                         </div>
-                        <div>
-                          <div className="text-xs font-medium uppercase tracking-wide mb-0.5" style={{ color: textMuted }}>
-                            DEMO EMAIL <span className="rounded bg-amber-500/10 px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">DEMO</span>
-                          </div>
-                          <div className="text-sm sm:text-[15px] font-semibold" style={{ color: textPrimary }}>
-                            {DEMO_CONTACT.email}
-                          </div>
-                        </div>
-                      </a>
-                      <div className="flex items-start gap-4">
-                        <div className="flex items-center justify-center w-11 h-11 rounded-2xl flex-shrink-0" style={{ backgroundColor: iconBg, boxShadow: isDark ? "0 12px 30px rgba(255,255,255,0.15)" : "0 12px 30px rgba(0,0,0,0.1)" }}>
-                          <Phone size={18} color={iconColor} />
-                        </div>
-                        <div>
-                          <div className="text-xs font-medium uppercase tracking-wide mb-0.5" style={{ color: textMuted }}>
-                            DEMO PHONE <span className="rounded bg-amber-500/10 px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">DEMO</span>
-                          </div>
-                          <div className="text-sm sm:text-[15px] font-semibold" style={{ color: textPrimary }}>
-                            {DEMO_CONTACT.phone}
-                          </div>
+                        <div className="text-sm sm:text-[15px] font-semibold" style={{ color: textPrimary }}>
+                          {value}
                         </div>
                       </div>
-                      <div className="flex items-start gap-4">
-                        <div className="flex items-center justify-center w-11 h-11 rounded-2xl flex-shrink-0" style={{ backgroundColor: iconBg, boxShadow: isDark ? "0 12px 30px rgba(255,255,255,0.15)" : "0 12px 30px rgba(0,0,0,0.1)" }}>
-                          <MapPin size={18} color={iconColor} />
-                        </div>
-                        <div>
-                          <div className="text-xs font-medium uppercase tracking-wide mb-0.5" style={{ color: textMuted }}>
-                            DEMO LOCATION <span className="rounded bg-amber-500/10 px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">DEMO</span>
-                          </div>
-                          <div className="text-sm sm:text-[15px] font-semibold" style={{ color: textPrimary }}>
-                            {DEMO_CONTACT.location}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="rounded-xl border border-amber-500/20 bg-amber-500/10 p-3">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">DEMO CONTACT — Replace with verified details</p>
-                        <p className="mt-1 text-xs leading-relaxed" style={{ color: textMuted }}>
-                          {DEMO_CONTACT.availability}
-                        </p>
-                        <p className="text-xs leading-relaxed" style={{ color: textMuted }}>
-                          {DEMO_CONTACT.responseTime}
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {DEMO_SOCIALS.map((s) => (
-                          <a key={s.label} href={s.href} className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium hover:bg-black hover:text-white" style={{ borderColor: border, color: textMuted }}>
-                            {s.label} <span className="ml-1 rounded bg-amber-500/10 px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-700">DEMO</span>
-                          </a>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {CONTACT_DETAILS.filter((d) => d.verified).map(({ icon: Icon, label, value, href }) => (
-                        <a key={label} href={href} className="flex items-start gap-4 group">
-                          <div className="flex items-center justify-center w-11 h-11 rounded-2xl flex-shrink-0 transition-transform duration-200 group-hover:scale-105" style={{ backgroundColor: iconBg, boxShadow: isDark ? "0 12px 30px rgba(255,255,255,0.15)" : "0 12px 30px rgba(0,0,0,0.1)" }}>
-                            <Icon size={18} color={iconColor} />
-                          </div>
-                          <div>
-                            <div className="text-xs font-medium uppercase tracking-wide mb-0.5" style={{ color: textMuted }}>
-                              {label}
-                            </div>
-                            <div className="text-sm sm:text-[15px] font-semibold" style={{ color: textPrimary }}>
-                              {value}
-                            </div>
-                          </div>
-                        </a>
-                      ))}
-                      {CONTACT_DETAILS.filter((d) => d.verified).length === 0 && (
-                        <p className="text-xs leading-relaxed" style={{ color: textMuted }}>
-                          Contact details will appear here once verified. Use the form to start a conversation — no placeholder information is shown.
-                        </p>
-                      )}
-                    </>
-                  )}
+                    </a>
+                  ))}
                 </div>
               </div>
 
               <div className="mt-12 pt-8 text-xs sm:text-sm leading-relaxed" style={{ color: textMuted, borderTop: `1px solid ${border}` }}>
-                {DEMO_MODE ? (
-                  <>
-                    <span className="rounded bg-amber-500/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700">DEMO AVAILABILITY</span>
-                    <span className="ml-2">{DEMO_CONTACT.availability}</span>
-                    <br />
-                    <span className="rounded bg-amber-500/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700">DEMO RESPONSE TIME</span>
-                    <span className="ml-2">{DEMO_CONTACT.responseTime}</span>
-                  </>
-                ) : (
-                  <>We aim to respond within one business day. Timelines vary by inquiry.</>
-                )}
+                We aim to respond within one business day. For direct queries, reach the founder or manager using the emails above.
               </div>
             </div>
 

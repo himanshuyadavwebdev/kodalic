@@ -22,8 +22,8 @@ const ScrollStackItem: React.FC<ScrollStackItemProps> = ({
   itemClassName = "",
   isDark = false,
 }) => {
-  const cardBg = isDark ? "rgba(255, 255, 255, 0.02)" : "#ffffff";
-  const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
+  const cardBg = isDark ? "#0a0a0a" : "#ffffff";
+  const cardBorder = isDark ? "rgba(255,255,255,0.10)" : "rgba(0,0,0,0.08)";
 
   return (
     <div
@@ -381,7 +381,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   if (useWindowScroll) {
     return (
       <div className={`relative w-full ${className}`.trim()} ref={scrollerRef}>
-        <div className="scroll-stack-inner pt-[20vh] px-6 sm:px-10 lg:px-20 pb-32 sm:pb-48 lg:pb-64">
+        <div className="scroll-stack-inner -mt-[120px] pt-[calc(20vh-120px)] px-6 sm:px-10 lg:px-20 pb-32 sm:pb-48 lg:pb-64">
           {children}
           <div className="scroll-stack-end w-full h-px" />
         </div>
@@ -512,7 +512,7 @@ export default function Blog({ isDark }: BlogProps) {
       </div>
 
       {/* Scroll stack of blog posts */}
-      <div className="w-full h-[320vh]">
+      <div className="w-full h-[1800px]">
         <ScrollStack
           useWindowScroll
           itemDistance={60}
@@ -551,18 +551,18 @@ export default function Blog({ isDark }: BlogProps) {
                       </span>
                     ) : demo && author ? (
                       <span className="flex items-center gap-2 text-xs" style={{ color: textMuted }}>
-                        {avatar ? <img src={avatar} alt={author} className="h-5 w-5 rounded-full object-cover" /> : <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black/10 text-[10px] font-semibold">DA</span>}
-                        {author} · {date} <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">DEMO</span>
+                        {avatar ? <img src={avatar} alt={author} className="h-5 w-5 rounded-full object-cover" /> : <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold ${isDark ? "bg-white/15 text-white" : "bg-black/10"}`}>DA</span>}
+                        {author} · {date} <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${isDark ? "bg-amber-500/20 text-amber-300" : "bg-amber-500/10 text-amber-700"}`}>DEMO</span>
                       </span>
                     ) : null}
                   </div>
-                  <h3 className="font-bold text-xl sm:text-2xl leading-snug mb-2 transition-colors duration-200 group-hover:text-black" style={{ color: textPrimary }}>
+                  <h3 className={`font-bold text-xl sm:text-2xl leading-snug mb-2 transition-colors duration-200 ${isDark ? "group-hover:text-white/90" : "group-hover:text-black"}`} style={{ color: textPrimary }}>
                     {title}
                   </h3>
                   <p className="text-sm sm:text-[15px] leading-relaxed max-w-xl" style={{ color: textMuted }}>
                     {excerpt}
                   </p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-black/40 transition-all duration-200 group-hover:gap-2 group-hover:text-black/80">
+                  <span className={`mt-4 inline-flex items-center gap-1 text-sm font-medium transition-all duration-200 group-hover:gap-2 ${isDark ? "text-white/50 group-hover:text-white/90" : "text-black/40 group-hover:text-black/80"}`}>
                     Read article <span aria-hidden>→</span>
                   </span>
                 </div>
@@ -583,7 +583,7 @@ export default function Blog({ isDark }: BlogProps) {
         </ScrollStack>
       </div>
       {DEMO_MODE && (
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 mb-[72px] flex justify-center">
           <Link href="/blog" className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2">
             Read the blog <span aria-hidden>→</span>
           </Link>

@@ -70,7 +70,7 @@ const CaseStudyListing = ({ isDark }: CaseStudyListingProps) => {
   const textMuted = isDark ? "rgba(245,243,255,0.55)" : "rgba(22,18,33,0.55)";
   const accent = isDark ? "#a78bfa" : "#6d28d9";
   const badgeBg = isDark ? "rgba(167,139,250,0.14)" : "rgba(109,40,217,0.08)";
-  const cardBg = isDark ? "rgba(20, 16, 32, 0.85)" : "#ffffff";
+  const cardBg = isDark ? "rgba(255,255,255,0.03)" : "#ffffff";
   const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)";
 
   const bigIndex = order[0];
