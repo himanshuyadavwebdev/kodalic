@@ -128,10 +128,6 @@ export default function Hero({ isDark = false }: HeroProps) {
               </a>
             </div>
 
-            <div className={`${base} ${ease} mt-8 flex items-center gap-3 text-xs text-white/45`} style={enter(320)}>
-              <span className="h-px w-8 bg-white/15" aria-hidden />
-              <span className="tracking-wide">Websites • Automation • AI • Digital products</span>
-            </div>
           </div>
 
           <div
