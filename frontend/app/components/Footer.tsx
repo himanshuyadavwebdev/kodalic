@@ -125,13 +125,13 @@ export default function Footer({ isDark, onHeightChange, onToggleDark }: FooterP
 
         <div className="w-full h-px mt-8" style={{ backgroundColor: border }} />
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 py-6 sm:py-8 w-full">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Kodalic" className="h-9 w-9 rounded-lg object-contain" />
             <span className="text-xl font-bold tracking-tight" style={{ color: textPrimary }}>
               Kodalic
             </span>
-            <span className="ml-2 hidden sm:inline text-xs font-medium uppercase tracking-wide" style={{ color: textMuted }}>
+            <span className="ml-2 inline text-xs font-medium uppercase tracking-wide" style={{ color: textMuted }}>
               ESTD 2019
             </span>
           </div>
