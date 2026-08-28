@@ -153,7 +153,7 @@ export default function Home() {
         so the footer (fixed at the viewport bottom, zIndex 1, behind this
         whole content layer at zIndex 2) only becomes visible once the
         page scrolls into this empty region — the "curtain reveal". */}
-    <div style={{ height: footerHeight }} aria-hidden="true" />
+    <div className="hidden sm:block" style={{ height: footerHeight }} aria-hidden="true" />
 
     <Footer isDark={isDark} onHeightChange={setFooterHeight} onToggleDark={toggleDark} />
     </>

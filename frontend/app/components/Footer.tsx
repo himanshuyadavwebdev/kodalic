@@ -2,7 +2,6 @@
 
 import React, { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
-import NewsletterDemo from "./NewsletterDemo";
 import { DEMO_MODE, DEMO_SOCIALS, DEMO_LEGAL } from "../data/demoData";
 
 const TwitterIcon = ({ size, color, style }: { size: number; color?: string; style?: React.CSSProperties }) => {
@@ -101,37 +100,15 @@ export default function Footer({ isDark, onHeightChange, onToggleDark }: FooterP
   };
 
   return (
-    <footer ref={ref} className="fixed bottom-0 left-0 w-full font-[Inter]" style={{ backgroundColor: bg, zIndex: 1 }}>
+    <footer ref={ref} className="relative sm:fixed sm:bottom-0 sm:left-0 w-full font-[Inter]" style={{ backgroundColor: bg, zIndex: 1 }}>
       <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-20 pt-16 pb-10">
-        <div className="pb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight max-w-2xl" style={{ color: textPrimary }}>
-            Let&apos;s build what&apos;s next.
-          </h2>
-          <p className="mt-4 max-w-xl text-sm sm:text-base leading-relaxed" style={{ color: textMuted }}>
-            Kodalic is a technology partner for teams that want reliable websites, practical automation, and applied AI — built around real business needs, not trends.
-          </p>
-          <a
-            href="#contact"
-            onClick={scrollTo("contact")}
-            className={`mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors ${isDark ? "bg-black text-white hover:bg-black/85" : "bg-white text-black hover:bg-white/90"}`}
-          >
-            Start a project <span aria-hidden>→</span>
-          </a>
-        </div>
-
-        <div className="mt-8">
-          <NewsletterDemo isDark={isDark} />
-        </div>
-
-        <div className="w-full h-px mt-8" style={{ backgroundColor: border }} />
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6 py-6 sm:py-8 w-full">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Kodalic" className="h-9 w-9 rounded-lg object-contain" />
             <span className="text-xl font-bold tracking-tight" style={{ color: textPrimary }}>
               Kodalic
             </span>
-            <span className="ml-2 hidden sm:inline text-xs font-medium uppercase tracking-wide" style={{ color: textMuted }}>
+            <span className="ml-2 inline text-xs font-medium uppercase tracking-wide" style={{ color: textMuted }}>
               ESTD 2019
             </span>
           </div>
