@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { DEMO_BLOG_POSTS } from "../../data/demoData";
 import { Globe, Sparkles, Cog } from "lucide-react";
 
@@ -16,22 +17,15 @@ export default function BlogArticlePage({ params }: { params: Promise<{ slug: st
   const post = DEMO_BLOG_POSTS.find((p) => p.slug === slug);
 
   if (!post) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-white font-[Inter]">
-        <p className="text-lg font-semibold">Article not found</p>
-        <Link href="/blog" className="mt-4 text-sm underline">
-          Back to blog
-        </Link>
-      </div>
-    );
+    notFound();
   }
 
   const Icon = iconMap[post.category] || Globe;
 
   return (
-    <main className="min-h-screen w-full bg-white font-[Inter]">
+    <main className="min-h-screen w-full bg-background font-[Inter]">
       <div className="mx-auto max-w-3xl px-6 sm:px-10 lg:px-20 pt-10 pb-16">
-        <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-medium text-black/60 hover:text-black">
+        <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
           ← Back to blog
         </Link>
 
@@ -42,7 +36,7 @@ export default function BlogArticlePage({ params }: { params: Promise<{ slug: st
         <div className="mt-4 relative h-64 w-full overflow-hidden rounded-2xl border bg-[#080c1e]" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
           <div className="absolute inset-0" style={{ background: "radial-gradient(600px 400px at 20% 20%, rgba(79,70,229,0.18) 0%, transparent 60%), radial-gradient(400px 300px at 80% 20%, rgba(20,184,166,0.10) 0%, transparent 55%)" }} />
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 border border-white/10">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-background/10 border border-white/10">
               <Icon size={28} color="white" />
             </div>
           </div>
@@ -50,39 +44,39 @@ export default function BlogArticlePage({ params }: { params: Promise<{ slug: st
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className="rounded-full bg-black/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-black/60">{post.category}</span>
-          <span className="text-xs text-black/40">{post.readingTime}</span>
-          <span className="flex items-center gap-2 text-xs text-black/40">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/10 text-[10px] font-semibold">DA</span>
+          <span className="rounded-full bg-black/5 dark:bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{post.category}</span>
+          <span className="text-xs text-muted-foreground">{post.readingTime}</span>
+          <span className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/10 dark:bg-white/15 text-[10px] font-semibold">DA</span>
             {post.author} · {post.date}
           </span>
         </div>
 
-        <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-[#161221]">{post.title}</h1>
-        <p className="mt-3 text-base leading-relaxed text-black/60">{post.description}</p>
+        <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-foreground">{post.title}</h1>
+        <p className="mt-3 text-base leading-relaxed text-muted-foreground">{post.description}</p>
 
-        <div className="prose prose-sm sm:prose-base mt-8 max-w-none text-black/80">
+        <div className="prose prose-sm sm:prose-base mt-8 max-w-none text-foreground">
           <div className="whitespace-pre-wrap leading-relaxed">{post.body}</div>
         </div>
 
-        <div className="mt-10 flex items-center justify-between border-t border-black/5 pt-6">
-          <Link href="/blog" className="text-sm font-medium text-black/60 hover:text-black">
+        <div className="mt-10 flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-6">
+          <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             ← Back to blog
           </Link>
-          <Link href="/" className="text-sm font-medium text-black/60 hover:text-black">
+          <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             Back to homepage →
           </Link>
         </div>
 
         <div className="mt-10">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-black/60">Related demo articles</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Related demo articles</h3>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {DEMO_BLOG_POSTS.filter((p) => p.slug !== slug)
               .slice(0, 2)
               .map((related) => (
-                <Link key={related.slug} href={`/blog/${related.slug}`} className="rounded-xl border bg-white p-4 hover:border-black/10" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
-                  <div className="text-xs font-semibold uppercase tracking-wide text-black/40">{related.category}</div>
-                  <div className="mt-1 text-sm font-semibold text-[#161221]">{related.title}</div>
+                  <Link key={related.slug} href={`/blog/${related.slug}`} className="rounded-xl border border-black/[0.06] dark:border-white/10 bg-background p-4 hover:border-black/10 dark:hover:border-white/20">
+                  <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{related.category}</div>
+                  <div className="mt-1 text-sm font-semibold text-foreground">{related.title}</div>
                 </Link>
               ))}
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "./theme-provider";
 import Navbar from "./components/Navbar";
 import Hero from "./pages/Hero";
 import About from "./pages/About";
@@ -21,17 +22,17 @@ const LIGHT_COLORS = {
   bottomRight: "rgba(255, 255, 255, 1)",
 };
 
-// Dark mode corner colors — set these to whatever you want
+// Dark mode corner colors — deep navy / near-black only (no purple/maroon)
 const DARK_COLORS = {
-  topRight: "rgba(70, 7, 99, 1)",
-  topLeft: "rgba(32, 7, 32, 1)",
-  bottomLeft: "rgba(10, 15, 30, 1)",
-  bottomRight: "rgba(15, 20, 40, 1)",
+  topRight: "rgba(14, 20, 45, 1)",
+  topLeft: "rgba(10, 15, 35, 1)",
+  bottomLeft: "rgba(8, 8, 12, 1)",
+  bottomRight: "rgba(10, 12, 26, 1)",
 };
 
 export default function Home() {
   const dotsRef = useRef<HTMLDivElement>(null);
-  const [isDark, setIsDark] = useState(false);
+  const { isDark, toggleDark } = useTheme();
   const [footerHeight, setFooterHeight] = useState(0);
 
   useEffect(() => {
@@ -77,7 +78,7 @@ export default function Home() {
         // html/body level in globals.css instead, which doesn't have this
         // problem since it controls the actual viewport scrollbar rather
         // than creating a nested one.
-        backgroundColor: isDark ? "#0a0a0a" : "#ffffff",
+        backgroundColor: isDark ? "#0a0f1e" : "#ffffff",
         transition: "background-color 0.5s ease",
       }}
     >
@@ -123,27 +124,27 @@ export default function Home() {
       <ScrollProgress />
 
       {/* Page content goes here */}
-      <div id="home">
+      <div id="home" style={{ scrollMarginTop: "28px" }}>
         <Hero isDark={isDark} />
       </div>
-      <div id="about">
+      <div id="about" style={{ scrollMarginTop: "28px" }}>
         <About isDark={isDark} />
       </div>
-      <TechMarquee />
-      <div id="services">
+      <TechMarquee isDark={isDark} />
+      <div id="services" style={{ scrollMarginTop: "-80px" }}>
         <Services isDark={isDark} />
       </div>
-      <div id="case-studies">
+      <div id="case-studies" style={{ scrollMarginTop: "0px" }}>
         <CaseStudyListing isDark={isDark} />
       </div>
-      <Testimonials />
-      <div id="blog">
+      <Testimonials isDark={isDark} />
+      <div id="blog" style={{ scrollMarginTop: "-60px" }}>
         <Blog isDark={isDark} />
       </div>
-      <div id="faq">
+      <div id="faq" style={{ scrollMarginTop: "28px" }}>
         <FAQ isDark={isDark} />
       </div>
-      <div id="contact">
+      <div id="contact" style={{ scrollMarginTop: "-40px" }}>
         <ContactUs isDark={isDark} />
       </div>
     </div>
@@ -154,7 +155,7 @@ export default function Home() {
         page scrolls into this empty region — the "curtain reveal". */}
     <div style={{ height: footerHeight }} aria-hidden="true" />
 
-    <Footer isDark={isDark} onHeightChange={setFooterHeight} onToggleDark={() => setIsDark((prev) => !prev)} />
+    <Footer isDark={isDark} onHeightChange={setFooterHeight} onToggleDark={toggleDark} />
     </>
   );
 }

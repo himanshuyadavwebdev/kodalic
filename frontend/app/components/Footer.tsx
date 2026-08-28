@@ -89,10 +89,10 @@ export default function Footer({ isDark, onHeightChange, onToggleDark }: FooterP
     return () => ro.disconnect();
   }, [onHeightChange]);
 
-  const bg = isDark ? "#ffffff" : "#0a0a0a";
-  const textPrimary = isDark ? "#000000" : "#ffffff";
-  const textMuted = isDark ? "#525252" : "#a3a3a3";
-  const border = isDark ? "#e5e5e5" : "#262626";
+  const bg = isDark ? "#0a0f1e" : "#ffffff";
+  const textPrimary = isDark ? "#ffffff" : "#000000";
+  const textMuted = isDark ? "#a3a3a3" : "#525252";
+  const border = isDark ? "rgba(255,255,255,0.1)" : "#e5e5e5";
 
   const scrollTo = (id?: string) => (e: React.MouseEvent) => {
     if (!id) return;
@@ -216,9 +216,21 @@ export default function Footer({ isDark, onHeightChange, onToggleDark }: FooterP
                 {l.label}
               </a>
             ))}
-            <span className="text-xs leading-relaxed mt-2" style={{ color: textMuted }}>
-              Verified contact details will appear here when supplied.
+            <a href="mailto:info@kodalic.com" className="text-xs leading-relaxed mt-2 hover:underline" style={{ color: textMuted }}>
+              info@kodalic.com
+            </a>
+            <span className="text-xs leading-relaxed mt-1" style={{ color: textMuted }}>
+              Founder: Aayush Sahu
             </span>
+            <a href="mailto:aayushsahu35491@gmail.com" className="text-xs leading-relaxed hover:underline" style={{ color: textMuted }}>
+              aayushsahu35491@gmail.com
+            </a>
+            <span className="text-xs leading-relaxed mt-1" style={{ color: textMuted }}>
+              Manager: Mukul Joshi
+            </span>
+            <a href="mailto:mukuljoshi318@gmail.com" className="text-xs leading-relaxed hover:underline" style={{ color: textMuted }}>
+              mukuljoshi318@gmail.com
+            </a>
           </FooterColumn>
         </div>
 
