@@ -2,7 +2,7 @@
 
 import React, { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
-import { DEMO_MODE, DEMO_SOCIALS, DEMO_LEGAL } from "../data/demoData";
+import { DEMO_MODE, DEMO_SOCIALS } from "../data/demoData";
 
 const TwitterIcon = ({ size, color, style }: { size: number; color?: string; style?: React.CSSProperties }) => {
   const strokeColor = color || style?.color || "currentColor";
@@ -73,6 +73,13 @@ const LEARN_LINKS: { label: string; id: string }[] = [
 ];
 
 const CONTACT_LINKS: { label: string; id: string }[] = [{ label: "Contact", id: "contact" }];
+
+
+const LEGAL_LINKS = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Cookie Policy", href: "/cookies" },
+];
 
 export default function Footer({ isDark, onHeightChange, onToggleDark }: FooterProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -147,16 +154,20 @@ export default function Footer({ isDark, onHeightChange, onToggleDark }: FooterP
           </div>
         </div>
 
-        {DEMO_MODE && (
+        {DEMO_SOCIALS.length > 0 && (
           <div className="flex flex-wrap items-center gap-3 py-6">
-            <span className="text-xs font-semibold uppercase tracking-wide" style={{ color: textMuted }}>
-              DEMO SOCIAL — Replace with verified profiles:
-            </span>
-            {DEMO_SOCIALS.map((s) => (
-              <Link key={s.label} href={s.href} className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium hover:bg-white hover:text-black" style={{ borderColor: border, color: textMuted }}>
-                {s.label} <span className="rounded bg-amber-500/10 px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-700">DEMO</span>
-              </Link>
-            ))}
+            {DEMO_SOCIALS.map((s) => {
+              const isExternal = s.href.startsWith("http");
+              return isExternal ? (
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium hover:bg-white hover:text-black" style={{ borderColor: border, color: textMuted }}>
+                  {s.label}
+                </a>
+              ) : (
+                <Link key={s.label} href={s.href} className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium hover:bg-white hover:text-black" style={{ borderColor: border, color: textMuted }}>
+                  {s.label}
+                </Link>
+              );
+            })}
           </div>
         )}
 
@@ -217,6 +228,18 @@ export default function Footer({ isDark, onHeightChange, onToggleDark }: FooterP
           <p className="text-sm" style={{ color: textMuted }}>
             © Kodalic {new Date().getFullYear()}. All rights reserved.
           </p>
+          <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {LEGAL_LINKS.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-sm transition-colors hover:underline"
+                style={{ color: textMuted }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-10">

@@ -161,9 +161,6 @@ export default function CaseStudyDetailPage({ params }: PageProps) {
             aria-hidden="true"
             className="w-full h-full object-cover"
           />
-          <span className="absolute left-4 top-4 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white backdrop-blur">
-            Placeholder image — replace with verified project screenshot
-          </span>
         </div>
 
         <p
@@ -173,10 +170,6 @@ export default function CaseStudyDetailPage({ params }: PageProps) {
           {data.intro}
         </p>
 
-        {/* Stats — illustrative example, not verified claim */}
-        <p className="mb-3 text-xs font-medium uppercase tracking-wide text-center" style={{ color: textMuted }}>
-          Illustrative example outcomes — actual results vary by project and are verified per engagement
-        </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-16">
           {data.stats.map((stat: { label: string; value: string }) => (
             <div

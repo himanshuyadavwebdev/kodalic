@@ -267,11 +267,6 @@ export default function ContactUs({ isDark }: ContactUsProps) {
 
             {/* Right: form */}
             <div className="w-full lg:w-3/5 p-8 sm:p-10 lg:p-12">
-              {DEMO_MODE && (
-                <div className="mb-6 flex justify-center">
-                  <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700">DEMO CONTACT FORM — No message was sent</span>
-                </div>
-              )}
               {submitted ? (
                 <div className="h-full flex flex-col items-center justify-center text-center py-16">
                   <div
@@ -284,10 +279,10 @@ export default function ContactUs({ isDark }: ContactUsProps) {
                     <CheckCircle2 size={28} color={iconColor} />
                   </div>
                   <h3 className="font-bold text-xl sm:text-2xl mb-2" style={{ color: textPrimary }}>
-                    {DEMO_MODE ? "DEMO MODE — Submission simulated successfully." : "Message sent."}
+                    Message sent.
                   </h3>
                   <p className="text-sm sm:text-base max-w-xs" style={{ color: textMuted }}>
-                    {DEMO_MODE ? "No message was sent. This is a demo success state for UI testing. Replace with verified backend." : "Thanks for reaching out — we'll be in touch shortly."}
+                    Thanks for reaching out — we&apos;ll be in touch shortly.
                   </p>
                   <button onClick={() => setSubmitted(false)} className="mt-8 text-sm font-semibold underline underline-offset-4" style={{ color: textPrimary }}>
                     Send another message
