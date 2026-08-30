@@ -7,6 +7,7 @@ import Hero from "./pages/Hero";
 import About from "./pages/About";
 import Services from "./pages/Services";
 import CaseStudyListing from "./pages/caseStudyListing";
+import { getPublicCaseStudies } from "../lib/get-public-case-studies";
 import ContactUs from "./pages/contactUs";
 import FAQ from "./pages/FAQ";
 import Blog from "./pages/Blog";
@@ -14,6 +15,7 @@ import Footer from "./components/Footer";
 import TechMarquee from "./components/TechMarquee";
 import Testimonials from "./components/Testimonials";
 import ScrollProgress from "./components/ScrollProgress";
+
 // Light mode corner colors
 const LIGHT_COLORS = {
   topLeft: "rgba(251, 240, 240, 1)",
@@ -30,7 +32,7 @@ const DARK_COLORS = {
   bottomRight: "rgba(10, 12, 26, 1)",
 };
 
-export default function Home() {
+export default async function Home() {
   const dotsRef = useRef<HTMLDivElement>(null);
   const { isDark, toggleDark } = useTheme();
   const [footerHeight, setFooterHeight] = useState(0);
