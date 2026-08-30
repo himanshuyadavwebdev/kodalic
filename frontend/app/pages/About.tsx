@@ -75,11 +75,16 @@ export default function About({ isDark = false }: AboutProps) {
                   style={{ background: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)", borderColor: cardBorder }}
                 >
                   <span className="text-xs font-medium" style={{ color: textMuted }}>
-                    Real work lives in Case Studies — no placeholder imagery.
+                    Real work lives in Case Studies.
                   </span>
-                  <span className="h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: isDark ? "#ffffff" : "#0a1128", color: isDark ? "#0a0a0a" : "#ffffff" }}>
+                  <a
+                    href="#case-studies"
+                    aria-label="View Case Studies"
+                    className="h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-transform duration-200 hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    style={{ background: isDark ? "#ffffff" : "#0a1128", color: isDark ? "#0a0a0a" : "#ffffff" }}
+                  >
                     →
-                  </span>
+                  </a>
                 </div>
               </div>
             </div>

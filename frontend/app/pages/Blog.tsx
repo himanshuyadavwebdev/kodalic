@@ -415,7 +415,8 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 /* -------------------------------------------------------------------------- */
 
 interface BlogPost {
-  icon: LucideIcon;
+  icon?: LucideIcon;
+  image?: string;
   tag: string;
   title: string;
   excerpt: string;
@@ -447,6 +448,7 @@ const BLOG_POSTS: BlogPost[] =
   DEMO_MODE && DEMO_BLOG_POSTS.length > 0
     ? DEMO_BLOG_POSTS.map((post) => ({
         icon: DEMO_ICON_MAP[post.category] || Globe,
+        image: post.image,
         tag: post.category,
         title: post.title,
         excerpt: post.description,
@@ -511,8 +513,8 @@ export default function Blog({ isDark }: BlogProps) {
         </ScrollFloat>
       </div>
 
-      {/* Scroll stack of blog posts */}
-      <div className="w-full h-[1800px]">
+      {/* Extra end space keeps the final stacked card clear of the CTA on every viewport. */}
+      <div className="w-full h-[2820px] sm:h-[3060px]">
         <ScrollStack
           useWindowScroll
           itemDistance={60}
@@ -524,16 +526,24 @@ export default function Blog({ isDark }: BlogProps) {
           rotationAmount={0}
           blurAmount={0}
         >
-          {BLOG_POSTS.map(({ icon: Icon, tag, title, excerpt, readTime, author, date, avatar, verified, demo, label, slug }) => {
+          {BLOG_POSTS.map(({ icon: Icon, image, tag, title, excerpt, readTime, author, date, avatar, verified, demo, label, slug }) => {
             const CardInner = (
               <div className="group flex h-full flex-col gap-6">
                 <div className="relative h-40 sm:h-44 w-full overflow-hidden rounded-2xl border bg-[#080c1e] transition-transform duration-300 will-change-transform group-hover:scale-[1.01]" style={{ borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }} aria-hidden="true">
-                  <div className="absolute inset-0" style={{ background: "radial-gradient(400px 280px at 20% 20%, rgba(79,70,229,0.18) 0%, transparent 60%), radial-gradient(320px 240px at 85% 15%, rgba(20,184,166,0.10) 0%, transparent 55%)" }} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur border border-white/10">
-                      <Icon size={24} color="white" />
-                    </div>
-                  </div>
+                  {image ? (
+                    <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0" style={{ background: "radial-gradient(400px 280px at 20% 20%, rgba(79,70,229,0.18) 0%, transparent 60%), radial-gradient(320px 240px at 85% 15%, rgba(20,184,166,0.10) 0%, transparent 55%)" }} />
+                      {Icon ? (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur border border-white/10">
+                            <Icon size={24} color="white" />
+                          </div>
+                        </div>
+                      ) : null}
+                    </>
+                  )}
                   {demo && <span className="absolute left-3 top-3 rounded-full bg-amber-500/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-black">DEMO ARTICLE</span>}
                 </div>
                 <div className="flex flex-1 flex-col justify-center">
@@ -583,7 +593,7 @@ export default function Blog({ isDark }: BlogProps) {
         </ScrollStack>
       </div>
       {DEMO_MODE && (
-        <div className="mt-8 mb-[72px] flex justify-center">
+        <div className="relative z-20 mt-12 mb-[92px] flex justify-center">
           <Link href="/blog" className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2">
             Read the blog <span aria-hidden>→</span>
           </Link>

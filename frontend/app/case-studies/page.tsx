@@ -32,12 +32,9 @@ export default function CaseStudiesIndex() {
         </Link>
 
         <div className="mt-8 text-center">
-          <span className="inline-flex rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
-            DEMO PROJECTS — Replace with verified projects
-          </span>
           <h1 className="mt-4 text-3xl sm:text-5xl font-bold tracking-tight text-foreground">Case Studies</h1>
           <p className="mt-3 mx-auto max-w-2xl text-sm sm:text-base leading-relaxed text-muted-foreground">
-            Five demonstration projects showing how Kodalic could present verified work. All content is DEMO and replaceable.
+            Selected work from Kodalic.
           </p>
         </div>
 
@@ -65,7 +62,6 @@ export default function CaseStudiesIndex() {
               className="group relative flex flex-col overflow-hidden rounded-[20px] border border-black/[0.06] dark:border-white/10 bg-background p-4 sm:p-6 transition-transform duration-200 hover:-translate-y-1 focus-visible:outline-offset-2"
             >
               <div className="flex items-center gap-2 mb-3">
-                <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700">DEMO PROJECT</span>
                 <span className="rounded-full bg-black/5 dark:bg-white/10 dark:bg-white/10 px-2.5 py-1 text-xs text-muted-foreground">{project.category}</span>
               </div>
               <h2 className="text-xl font-bold tracking-tight text-foreground">{project.name}</h2>
@@ -81,13 +77,12 @@ export default function CaseStudiesIndex() {
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-muted-foreground group-hover:text-foreground">
                 View Case Study <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </span>
-              <span className="absolute right-4 top-4 rounded-full bg-black/70 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">DEMO UI</span>
             </Link>
           ))}
         </div>
 
         {filtered.length === 0 && (
-          <p className="mt-10 text-center text-sm text-muted-foreground">No demo projects for this category.</p>
+          <p className="mt-10 text-center text-sm text-muted-foreground">No projects for this category.</p>
         )}
       </div>
     </main>
