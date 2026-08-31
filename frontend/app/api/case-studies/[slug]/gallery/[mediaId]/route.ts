@@ -9,6 +9,16 @@ type RouteContext = {
   }>;
 };
 
+const MIME_EXTENSIONS: Record<string, string> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  avif: "image/avif",
+  gif: "image/gif",
+  svg: "image/svg+xml",
+};
+
 export async function GET(
   _request: Request,
   { params }: RouteContext,
@@ -56,21 +66,15 @@ export async function GET(
     });
   }
 
-  const { data: signedUrl, error: signedUrlError } =
+  const { data: fileData, error: downloadError } =
     await supabase.storage
       .from("case-study-media")
-      .createSignedUrl(
-        media.storage_key,
-        60 * 10,
-      );
+      .download(media.storage_key);
 
-  if (
-    signedUrlError ||
-    !signedUrl?.signedUrl
-  ) {
+  if (downloadError || !fileData) {
     console.error(
-      "Failed to create gallery signed URL:",
-      signedUrlError,
+      "Failed to download gallery media:",
+      downloadError,
     );
 
     return new NextResponse("Not Found", {
@@ -78,8 +82,21 @@ export async function GET(
     });
   }
 
-  return NextResponse.redirect(
-    signedUrl.signedUrl,
-    302,
-  );
+  const extension = media.storage_key
+    .split(".")
+    .pop()
+    ?.toLowerCase() ?? "";
+  const contentType =
+    MIME_EXTENSIONS[extension] || "application/octet-stream";
+
+  const bytes = new Uint8Array(await fileData.arrayBuffer());
+
+  return new NextResponse(bytes, {
+    status: 200,
+    headers: {
+      "Content-Type": contentType,
+      "Content-Length": String(bytes.length),
+      "Cache-Control": "public, max-age=31536000, immutable",
+    },
+  });
 }

@@ -7,6 +7,16 @@ type RouteContext = {
   }>;
 };
 
+const MIME_EXTENSIONS: Record<string, string> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  avif: "image/avif",
+  gif: "image/gif",
+  svg: "image/svg+xml",
+};
+
 export async function GET(
   _request: Request,
   { params }: RouteContext,
@@ -21,7 +31,7 @@ export async function GET(
 
   const { data: media, error } = await supabase
     .from("media")
-    .select("storage_key")
+    .select("storage_key, mime")
     .eq("id", mediaId)
     .maybeSingle();
 
@@ -30,15 +40,31 @@ export async function GET(
     return new NextResponse("Not Found", { status: 404 });
   }
 
-  const { data: signedUrl, error: signedUrlError } =
-    await supabase.storage
-      .from("case-study-media")
-      .createSignedUrl(media.storage_key, 60 * 60); // 1 hour expiration
+  // Download the file directly instead of redirecting to a signed URL.
+  // Redirects to Supabase signed URLs break on many mobile browsers
+  // because img tags don't reliably follow 302 redirects across origins.
+  const { data: fileData, error: downloadError } = await supabase.storage
+    .from("case-study-media")
+    .download(media.storage_key);
 
-  if (signedUrlError || !signedUrl?.signedUrl) {
-    console.error("Failed to create signed URL:", signedUrlError);
+  if (downloadError || !fileData) {
+    console.error("Failed to download media file:", downloadError);
     return new NextResponse("Not Found", { status: 404 });
   }
 
-  return NextResponse.redirect(signedUrl.signedUrl, 302);
+  // Determine the content type from the stored mime, or fall back to the extension.
+  const extension = media.storage_key.split(".").pop()?.toLowerCase() ?? "";
+  const contentType =
+    media.mime || MIME_EXTENSIONS[extension] || "application/octet-stream";
+
+  const bytes = new Uint8Array(await fileData.arrayBuffer());
+
+  return new NextResponse(bytes, {
+    status: 200,
+    headers: {
+      "Content-Type": contentType,
+      "Content-Length": String(bytes.length),
+      "Cache-Control": "public, max-age=31536000, immutable",
+    },
+  });
 }
