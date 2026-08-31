@@ -1,87 +1,240 @@
-"use client";
-
-import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { DEMO_BLOG_POSTS } from "../../data/demoData";
-import { Globe, Sparkles, Cog } from "lucide-react";
 
-const iconMap: Record<string, any> = {
-  AI: Sparkles,
-  Automation: Cog,
-  Engineering: Globe,
-};
+import { getPublicBlogPost } from "../../../lib/blog/get-public-blog-post";
 
-export default function BlogArticlePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
-  const post = DEMO_BLOG_POSTS.find((p) => p.slug === slug);
+ 
 
-  if (!post) {
+function formatDate(value: string | null) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+}
+
+function getReadingTime(content: string) {
+  const words = content.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+
+  return `${minutes} min read`;
+}
+
+function renderContent(content: string) {
+  const blocks = content
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+
+  return blocks.map((block, index) => {
+    const lines = block
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    const firstLine = lines[0];
+
+    if (
+      firstLine &&
+      firstLine !== "FAQ" &&
+      !firstLine.includes("|") &&
+      lines.length === 1 &&
+      !firstLine.endsWith(".") &&
+      !firstLine.startsWith("-") &&
+      !/^\d+\./.test(firstLine) &&
+      firstLine.length < 100
+    ) {
+      return (
+        <h2
+          key={index}
+          className="mt-10 text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+        >
+          {firstLine}
+        </h2>
+      );
+    }
+
+    if (lines.every((line) => line.startsWith("- "))) {
+      return (
+        <ul
+          key={index}
+          className="my-5 list-disc space-y-2 pl-6 text-base leading-8 text-muted-foreground"
+        >
+          {lines.map((line, lineIndex) => (
+            <li key={lineIndex}>
+              {line.slice(2)}
+            </li>
+          ))}
+        </ul>
+      );
+    }
+
+    if (lines.every((line) => /^\d+\.\s/.test(line))) {
+      return (
+        <ol
+          key={index}
+          className="my-5 list-decimal space-y-2 pl-6 text-base leading-8 text-muted-foreground"
+        >
+          {lines.map((line, lineIndex) => (
+            <li key={lineIndex}>
+              {line.replace(/^\d+\.\s*/, "")}
+            </li>
+          ))}
+        </ol>
+      );
+    }
+
+    if (lines.every((line) => line.includes("|"))) {
+      const rows = lines.map((line) =>
+        line
+          .split("|")
+          .map((cell) => cell.trim()),
+      );
+
+      return (
+        <div
+          key={index}
+          className="my-6 overflow-x-auto rounded-2xl border border-black/[0.06] dark:border-white/10"
+        >
+          <table className="w-full min-w-[600px] text-left text-sm">
+            <tbody>
+              {rows.map((row, rowIndex) => (
+                <tr
+                  key={rowIndex}
+                  className={
+                    rowIndex === 0
+                      ? "border-b border-black/[0.08] bg-black/[0.03] font-semibold dark:border-white/10 dark:bg-white/[0.04]"
+                      : "border-b border-black/[0.06] last:border-b-0 dark:border-white/10"
+                  }
+                >
+                  {row.map((cell, cellIndex) => (
+                    <td
+                      key={cellIndex}
+                      className="px-4 py-3 align-top text-muted-foreground"
+                    >
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    return (
+      <p
+        key={index}
+        className="my-5 text-base leading-8 text-muted-foreground"
+      >
+        {lines.join(" ")}
+      </p>
+    );
+  });
+}
+
+interface PageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+}
+
+export default async function BlogPostPage({
+  params,
+}: PageProps) {
+  const { slug } = await params;
+
+   const blogPost = await getPublicBlogPost(slug);
+
+  if (!blogPost) {
     notFound();
   }
 
-  const Icon = iconMap[post.category] || Globe;
+  const category = blogPost.category;
 
   return (
     <main className="min-h-screen w-full bg-background font-[Inter]">
-      <div className="mx-auto max-w-3xl px-6 sm:px-10 lg:px-20 pt-10 pb-16">
-        <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-          ← Back to blog
+      <article className="mx-auto max-w-4xl px-6 pb-20 pt-10 sm:px-10 lg:px-12">
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
+        >
+          ← Back to Blog
         </Link>
 
-        <span className="mt-8 inline-flex rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
-          DEMO ARTICLE — Replace with approved Kodalic editorial content
-        </span>
+        <header className="mt-10">
+          <div className="flex flex-wrap items-center gap-2">
+            {category && (
+              <span className="rounded-full bg-black/5 px-3 py-1 text-xs font-medium text-muted-foreground dark:bg-white/10">
+                {category.name}
+              </span>
+            )}
 
-        <div className="mt-4 relative h-64 w-full overflow-hidden rounded-2xl border bg-[#080c1e]" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
-          <div className="absolute inset-0" style={{ background: "radial-gradient(600px 400px at 20% 20%, rgba(79,70,229,0.18) 0%, transparent 60%), radial-gradient(400px 300px at 80% 20%, rgba(20,184,166,0.10) 0%, transparent 55%)" }} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-background/10 border border-white/10">
-              <Icon size={28} color="white" />
-            </div>
+            {blogPost.featured && (
+              <span className="rounded-full bg-[#7357ff]/10 px-3 py-1 text-xs font-medium text-[#7357ff]">
+                Featured
+              </span>
+            )}
+
+            <span className="text-xs text-muted-foreground">
+              {getReadingTime(blogPost.content)}
+            </span>
           </div>
-          <span className="absolute left-4 top-4 rounded-full bg-amber-500/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-black">DEMO ARTICLE</span>
-        </div>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className="rounded-full bg-black/5 dark:bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{post.category}</span>
-          <span className="text-xs text-muted-foreground">{post.readingTime}</span>
-          <span className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/10 dark:bg-white/15 text-[10px] font-semibold">DA</span>
-            {post.author} · {post.date}
-          </span>
-        </div>
+          <h1 className="mt-5 text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            {blogPost.title}
+          </h1>
 
-        <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-foreground">{post.title}</h1>
-        <p className="mt-3 text-base leading-relaxed text-muted-foreground">{post.description}</p>
+          {blogPost.excerpt && (
+            <p className="mt-5 text-lg leading-8 text-muted-foreground sm:text-xl">
+              {blogPost.excerpt}
+            </p>
+          )}
 
-        <div className="prose prose-sm sm:prose-base mt-8 max-w-none text-foreground">
-          <div className="whitespace-pre-wrap leading-relaxed">{post.body}</div>
-        </div>
+          <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-[11px] font-semibold dark:bg-white/15">
+              KT
+            </span>
 
-        <div className="mt-10 flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-6">
-          <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            ← Back to blog
-          </Link>
-          <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            Back to homepage →
-          </Link>
-        </div>
+            <span>Kodalic Team</span>
 
-        <div className="mt-10">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Related demo articles</h3>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {DEMO_BLOG_POSTS.filter((p) => p.slug !== slug)
-              .slice(0, 2)
-              .map((related) => (
-                  <Link key={related.slug} href={`/blog/${related.slug}`} className="rounded-xl border border-black/[0.06] dark:border-white/10 bg-background p-4 hover:border-black/10 dark:hover:border-white/20">
-                  <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{related.category}</div>
-                  <div className="mt-1 text-sm font-semibold text-foreground">{related.title}</div>
-                </Link>
-              ))}
+            {blogPost.published_at && (
+              <>
+                <span>·</span>
+                <span>
+                  {formatDate(blogPost.published_at)}
+                </span>
+              </>
+            )}
+          </div>
+        </header>
+
+        <div className="mt-12 rounded-3xl border border-black/[0.06] bg-black/[0.02] p-6 dark:border-white/10 dark:bg-white/[0.02] sm:p-10">
+          <div className="prose prose-neutral max-w-none dark:prose-invert">
+            {renderContent(blogPost.content)}
           </div>
         </div>
-      </div>
+
+        <div className="mt-12 border-t border-black/[0.06] pt-8 dark:border-white/10">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
+          >
+            ← Read more articles
+          </Link>
+        </div>
+      </article>
     </main>
   );
 }

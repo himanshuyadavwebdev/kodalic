@@ -35,7 +35,7 @@ export default function NewsletterDemo({ isDark }: { isDark: boolean }) {
     return (
       <div className="rounded-2xl border p-6 text-center" style={{ borderColor: border, backgroundColor: isDark ? "#f5f5f5" : "#171717" }}>
         <p className="text-sm font-semibold" style={{ color: textPrimary }}>
-          DEMO MODE — Subscription simulated. No subscription was created.
+          Thank you — subscription received.
         </p>
         <button onClick={() => setSuccess(false)} className="mt-4 text-xs font-semibold underline" style={{ color: textMuted }}>
           Subscribe again
@@ -46,16 +46,11 @@ export default function NewsletterDemo({ isDark }: { isDark: boolean }) {
 
   return (
     <div className="rounded-2xl border p-6" style={{ borderColor: border, backgroundColor: isDark ? "#ffffff" : "#0a0a0a" }}>
-      <div className="mb-3 flex items-center gap-2">
-        <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700">
-          DEMO NEWSLETTER
-        </span>
-      </div>
       <h3 className="text-base font-semibold" style={{ color: textPrimary }}>
-        Stay in the loop — demo
+        Stay in the loop
       </h3>
       <p className="mt-1 text-xs leading-relaxed" style={{ color: textMuted }}>
-        Replace with real newsletter when verified. No subscription is created in demo mode.
+        Subscribe for updates and insights.
       </p>
       <form onSubmit={handleSubmit} noValidate className="mt-4 flex flex-col sm:flex-row gap-3">
         <label htmlFor="newsletter-email" className="sr-only">

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./theme-provider";
-
+import PageViewTracker from "../components/analytics/page-view-tracker";
 const themeScript = `(function(){try{var t=localStorage.getItem('theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
 
 const geistSans = Geist({
@@ -54,6 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex flex-col" suppressHydrationWarning>
         <ThemeProvider>{children}</ThemeProvider>
+        <PageViewTracker />
       </body>
     </html>
   );
