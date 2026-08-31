@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "../../../../lib/supabase/server";
+import { createAdminClient } from "../../../../lib/supabase/admin";
 
 type RouteContext = {
   params: Promise<{
@@ -27,7 +27,7 @@ export async function GET(
     return new NextResponse("Media ID is required", { status: 400 });
   }
 
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data: media, error } = await supabase
     .from("media")

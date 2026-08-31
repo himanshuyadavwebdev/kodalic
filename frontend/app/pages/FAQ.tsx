@@ -144,7 +144,7 @@ export default function FAQ({ isDark }: FAQProps) {
   return (
     <div className="relative w-full font-[Inter]">
       {/* Section heading */}
-      <div className="flex flex-col items-center justify-center px-6 pt-32 pb-14 text-center">
+      <div className="flex flex-col items-center justify-center px-6 pt-26 pb-14 text-center">
         <h2
           className={`font-bold tracking-[-0.04em] uppercase text-4xl sm:text-5xl lg:text-6xl leading-[1.02] max-w-2xl text-center`}
           style={{ color: textPrimary }}

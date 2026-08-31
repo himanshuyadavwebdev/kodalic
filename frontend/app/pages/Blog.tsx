@@ -466,7 +466,7 @@ export default function Blog({ isDark, posts }: BlogProps) {
       </div>
 
       {/* Extra end space keeps the final stacked card clear of the CTA on every viewport. */}
-      <div className="w-full h-[2820px] sm:h-[3060px]">
+      <div className="w-full h-[3300px] sm:h-[3060px]">
         <ScrollStack
           useWindowScroll
           itemDistance={60}
@@ -563,7 +563,7 @@ const readTime = `${Math.max(1, Math.ceil(words / 200))} min read`;
         </ScrollStack>
       </div>
       {posts.length > 0 && (
-        <div className="relative z-20 mt-12 mb-[92px] flex justify-center">
+        <div className="relative z-20 mt-12 mb-[120px] sm:mb-[100px] lg:mb-[92px] flex justify-center">
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2"
