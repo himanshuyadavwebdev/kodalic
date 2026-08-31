@@ -3,9 +3,9 @@ import React, { useLayoutEffect, useEffect, useRef, useCallback, useState } from
 import type { ReactNode } from "react";
 import Lenis from "lenis";
 import Link from "next/link";
-import { Sparkles, Cog, Globe, type LucideIcon } from "lucide-react";
+import { Globe, type LucideIcon } from "lucide-react";
 import ScrollFloat from "../components/scrollFloat";
-import { DEMO_MODE, DEMO_BLOG_POSTS } from "../data/demoData";
+import type { PublicBlogPost } from "../../lib/blog/get-public-blog-posts";
 
 /* -------------------------------------------------------------------------- */
 /*  ScrollStack Components                                                    */
@@ -432,68 +432,20 @@ interface BlogPost {
 
 interface BlogProps {
   isDark: boolean;
+  posts: PublicBlogPost[];
 }
 
-const VERIFIED_BLOG_POSTS: BlogPost[] = [];
 
-const DEMO_ICON_MAP: Record<string, LucideIcon> = {
-  AI: Sparkles,
-  Automation: Cog,
-  Engineering: Globe,
-  "Web Application": Globe,
-  Websites: Globe,
-};
 
-const BLOG_POSTS: BlogPost[] =
-  DEMO_MODE && DEMO_BLOG_POSTS.length > 0
-    ? DEMO_BLOG_POSTS.map((post) => ({
-        icon: DEMO_ICON_MAP[post.category] || Globe,
-        image: post.image,
-        tag: post.category,
-        title: post.title,
-        excerpt: post.description,
-        readTime: post.readingTime,
-        author: post.author,
-        date: post.date,
-        avatar: post.avatar,
-        verified: post.verified,
-        demo: post.demo,
-        label: post.label,
-        slug: (post as any).slug,
-      }))
-    : VERIFIED_BLOG_POSTS.length > 0
-    ? VERIFIED_BLOG_POSTS
-    : [
-        {
-          icon: Sparkles,
-          tag: "AI",
-          title: "Where AI actually earns its keep in a product",
-          excerpt: "Most AI features are gimmicks. Here's how we decide which ones are worth shipping — and which ones we skip.",
-          readTime: "6 min read",
-        },
-        {
-          icon: Cog,
-          tag: "Automation",
-          title: "The workflows we automate first for every client",
-          excerpt: "A breakdown of the highest-leverage automations we build, and why they usually pay for themselves in weeks.",
-          readTime: "5 min read",
-        },
-        {
-          icon: Globe,
-          tag: "Engineering",
-          title: "What makes a website actually fast in 2026",
-          excerpt: "Speed isn't one metric. Here's the real checklist we run through before calling a build production-ready.",
-          readTime: "7 min read",
-        },
-      ];
 
-export default function Blog({ isDark }: BlogProps) {
+
+
+export default function Blog({ isDark, posts }: BlogProps) {
   const textPrimary = isDark ? "#ffffff" : "#000000";
   const textMuted = isDark ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.6)";
   const accent = isDark ? "#ffffff" : "#000000";
   const tagBg = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)";
   const iconBg = isDark ? "#ffffff" : "#000000";
-  const iconColor = isDark ? "#000000" : "#ffffff";
 
   return (
     <div className="relative w-full isolate font-[Inter]" style={{ zIndex: 0 }}>
@@ -526,7 +478,26 @@ export default function Blog({ isDark }: BlogProps) {
           rotationAmount={0}
           blurAmount={0}
         >
-          {BLOG_POSTS.map(({ icon: Icon, image, tag, title, excerpt, readTime, author, date, avatar, verified, demo, label, slug }) => {
+          {posts.map((post) => {
+  const Icon = Globe;
+  const image = post.cover_media_id ? `/api/media/${post.cover_media_id}` : undefined;
+  const tag = post.category?.name ?? "Blog";
+  const title = post.title;
+  const excerpt = post.excerpt ?? "";
+  const words = post.content.trim().split(/\s+/).filter(Boolean).length;
+const readTime = `${Math.max(1, Math.ceil(words / 200))} min read`;
+  const author = "Kodalic Team";
+  const date = post.published_at
+    ? new Date(post.published_at).toLocaleDateString("en-IN", {
+        month: "long",
+        year: "numeric",
+      })
+    : "";
+  const avatar = "";
+  const verified = true;
+  const demo = false;
+  const label = "";
+  const slug = post.slug;
             const CardInner = (
               <div className="group flex h-full flex-col gap-6">
                 <div className="relative h-40 sm:h-44 w-full overflow-hidden rounded-2xl border bg-[#080c1e] transition-transform duration-300 will-change-transform group-hover:scale-[1.01]" style={{ borderColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)" }} aria-hidden="true">
@@ -544,7 +515,6 @@ export default function Blog({ isDark }: BlogProps) {
                       ) : null}
                     </>
                   )}
-                  {demo && <span className="absolute left-3 top-3 rounded-full bg-amber-500/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-black">DEMO ARTICLE</span>}
                 </div>
                 <div className="flex flex-1 flex-col justify-center">
                   <div className="flex flex-wrap items-center gap-3 mb-3">
@@ -592,9 +562,12 @@ export default function Blog({ isDark }: BlogProps) {
           })}
         </ScrollStack>
       </div>
-      {DEMO_MODE && (
+      {posts.length > 0 && (
         <div className="relative z-20 mt-12 mb-[92px] flex justify-center">
-          <Link href="/blog" className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-6 py-3 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-offset-2"
+          >
             Read the blog <span aria-hidden>→</span>
           </Link>
         </div>

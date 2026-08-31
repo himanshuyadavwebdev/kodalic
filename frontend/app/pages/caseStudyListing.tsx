@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { DEMO_MODE, DEMO_CASE_STUDIES } from "../data/demoData";
+import { DEMO_CASE_STUDIES } from "../data/demoData";
 
 interface CaseStudyItem {
   slug: string;
@@ -20,26 +20,91 @@ interface CaseStudyListingProps {
   isDark: boolean;
 }
 
-const VERIFIED_CASE_STUDIES: CaseStudyItem[] = [];
-
-const CASE_STUDIES: CaseStudyItem[] = DEMO_MODE
-  ? DEMO_CASE_STUDIES.map((data) => ({
-      slug: data.slug,
-      heading: data.name,
-      description: data.description,
-      image: data.image,
-      href: data.href,
-      tags: data.tags,
-      delivered: data.delivered,
-      verified: data.verified,
-      category: data.category,
-    }))
-  : VERIFIED_CASE_STUDIES.length > 0
-    ? VERIFIED_CASE_STUDIES
-    : [];
+const DEMO_CASE_STUDY_ITEMS: CaseStudyItem[] =
+  DEMO_CASE_STUDIES.map((d) => ({
+    slug: d.slug,
+    heading: d.name,
+    description: d.description,
+    image: d.image,
+    href: d.href,
+    tags: d.tags,
+    delivered: d.delivered,
+    verified: d.verified,
+    category: d.category,
+  }));
 
 const CaseStudyListing = ({ isDark }: CaseStudyListingProps) => {
-  const [order, setOrder] = useState<number[]>(CASE_STUDIES.map((_, index) => index));
+  const [caseStudies, setCaseStudies] = useState<CaseStudyItem[]>(
+    DEMO_CASE_STUDY_ITEMS,
+  );
+
+  const [order, setOrder] = useState<number[]>(
+    DEMO_CASE_STUDY_ITEMS.map((_, i) => i),
+  );
+  useEffect(() => {
+  let cancelled = false;
+
+  async function loadCaseStudies() {
+    try {
+      const response = await fetch(
+        "/api/case-studies",
+        {
+          cache: "no-store",
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Failed to load Case Studies.",
+        );
+      }
+
+      const data = await response.json();
+
+      if (cancelled) {
+        return;
+      }
+
+      const realCaseStudies: CaseStudyItem[] =
+        Array.isArray(data)
+          ? data.map((item) => ({
+              slug: item.slug,
+              heading: item.title,
+              description: item.description,
+              image: item.hero_storage_key
+                ? `/api/case-studies/${item.slug}/image`
+                : "/case-studies/placeholder.webp",
+              href:
+                item.website_url ||
+                `/case-studies/${item.slug}`,
+              tags: item.tags ?? [],
+              delivered: item.services ?? [],
+              verified: true,
+              category: item.domain,
+            }))
+          : [];
+
+      const combined = [
+        ...realCaseStudies,
+        ...DEMO_CASE_STUDY_ITEMS,
+      ].slice(0, 5);
+
+      setCaseStudies(combined);
+      setOrder(combined.map((_, i) => i));
+    } catch (error) {
+      console.error(
+        "Failed to load public Case Studies:",
+        error,
+      );
+    }
+  }
+
+  loadCaseStudies();
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
   const featuredCardRef = useRef<HTMLDivElement | null>(null);
 
   const textPrimary = isDark ? "#f5f3ff" : "#161221";
@@ -47,11 +112,9 @@ const CaseStudyListing = ({ isDark }: CaseStudyListingProps) => {
   const accent = isDark ? "#a78bfa" : "#6d28d9";
   const cardBg = isDark ? "rgba(255,255,255,0.03)" : "#ffffff";
   const cardBorder = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.05)";
-
-  const bigIndex = order[0];
-  const smallIndices = order.slice(1);
-  const big = CASE_STUDIES[bigIndex];
-
+const bigIndex = order[0];
+const smallIndices = order.slice(1);
+const big = caseStudies[bigIndex];
   const promote = (index: number) => {
     setOrder((previous) => [index, ...previous.filter((itemIndex) => itemIndex !== index)]);
 
@@ -159,7 +222,7 @@ const CaseStudyListing = ({ isDark }: CaseStudyListingProps) => {
 
         <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {smallIndices.map((index) => {
-            const item = CASE_STUDIES[index];
+            const item = caseStudies[index];
             return (
               <button
                 key={item.slug}
