@@ -251,7 +251,7 @@ class TestimonialMorphEngine {
   private reducedMotion: boolean;
   private onIndexChange: (index: number) => void;
   private renderer: Renderer;
-  private gl: WebGLRenderingContext | WebGL2RenderingContext;
+  private gl: Renderer["gl"];
   private canvas: HTMLCanvasElement;
   private geometry: Triangle;
   private program: Program;
