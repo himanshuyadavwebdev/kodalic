@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { Globe, Cog, Sparkles, LayoutGrid, Wrench, type LucideIcon } from "lucide-react";
 import { DEMO_MODE, DEMO_STATS } from "../data/demoData";
 import "../components/MagicBento.css";
+import VariableProximity from "../components/VariableProximity";
 
 interface ServicesProps {
   isDark: boolean;
@@ -108,46 +109,146 @@ const RevealOnScroll: React.FC<RevealOnScrollProps> = ({ children, className = "
   );
 };
 
-const DemoCountUp: React.FC<{ value: number }> = ({ value }) => {
-  const ref = useRef<HTMLSpanElement>(null);
+interface StatCardProps {
+  stat: (typeof DEMO_STATS)[number];
+  isDark: boolean;
+  textMuted: string;
+}
+
+const StatCard: React.FC<StatCardProps> = ({ stat, isDark, textMuted }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
   const [display, setDisplay] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setDisplay(value);
+    const card = cardRef.current;
+    if (!card || hasAnimated) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setDisplay(stat.value);
       setHasAnimated(true);
       return;
     }
-    const el = ref.current?.parentElement;
-    if (!el) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          setHasAnimated(true);
-          const start = performance.now();
-          const duration = 1100;
-          const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-          const animate = (now: number) => {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / duration, 1);
-            setDisplay(Math.round(ease(progress) * value));
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
-          observer.unobserve(el);
-        }
+        if (!entry.isIntersecting) return;
+        setHasAnimated(true);
+        const start = performance.now();
+        const duration = 1100;
+        const animate = (now: number) => {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          setDisplay(Math.round(eased * stat.value));
+          if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+        observer.unobserve(card);
       },
       { threshold: 0.3 }
     );
-    observer.observe(el);
+
+    observer.observe(card);
     return () => observer.disconnect();
-  }, [value, hasAnimated]);
+  }, [hasAnimated, stat.value]);
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") return;
+    const card = cardRef.current;
+    if (!card) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    const px = (x / rect.width) * 100;
+    const py = (y / rect.height) * 100;
+    const dx = x - rect.width / 2;
+    const dy = y - rect.height / 2;
+    const rotY = (dx / (rect.width / 2)) * 3.2;
+    const rotX = -(dy / (rect.height / 2)) * 3.2;
+
+    card.style.setProperty("--stat-glow-x", `${px}%`);
+    card.style.setProperty("--stat-glow-y", `${py}%`);
+    gsap.to(card, {
+      rotationY: Math.max(-6, Math.min(6, rotY)),
+      rotationX: Math.max(-6, Math.min(6, rotX)),
+      transformPerspective: 850,
+      duration: 0.42,
+      ease: "power3.out",
+      transformOrigin: "center center",
+      overwrite: "auto",
+    });
+  };
+
+  const resetTilt = () => {
+    const card = cardRef.current;
+    if (!card) return;
+    gsap.to(card, {
+      rotationX: 0,
+      rotationY: 0,
+      duration: 0.62,
+      ease: "power3.out",
+      overwrite: "auto",
+    });
+  };
 
   return (
-    <span ref={ref} aria-hidden="true">
-      {display}
-    </span>
+    <div
+      ref={cardRef}
+      className="group relative isolate overflow-hidden rounded-[20px] border bg-white px-5 py-6 text-center transition-[border-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-[0_22px_42px_rgba(109,40,217,0.11)] dark:bg-white/[0.03] last:col-span-2 last:mx-auto last:w-full lg:last:col-span-1 lg:last:mx-0 lg:last:w-auto"
+      style={{
+        borderColor: isDark ? "rgba(167,139,250,0.14)" : "rgba(109,40,217,0.10)",
+        backgroundImage: isDark
+          ? "radial-gradient(circle at var(--stat-glow-x, 50%) var(--stat-glow-y, 50%), rgba(167,139,250,0.14), transparent 48%), linear-gradient(rgba(196,181,253,0.01375) 1px, transparent 1px), linear-gradient(90deg, rgba(196,181,253,0.01375) 1px, transparent 1px)"
+          : "radial-gradient(circle at var(--stat-glow-x, 50%) var(--stat-glow-y, 50%), rgba(196,181,253,0.20), transparent 48%), linear-gradient(rgba(167,139,250,0.02875) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,0.02875) 1px, transparent 1px)",
+        backgroundSize: "100% 100%, 24px 24px, 24px 24px",
+        backgroundPosition: "center",
+        willChange: "transform",
+      }}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetTilt}
+      onPointerCancel={resetTilt}
+      onBlur={resetTilt}
+      tabIndex={0}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-[-1] opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
+        style={{
+          background: isDark
+            ? "radial-gradient(circle at var(--stat-glow-x, 50%) var(--stat-glow-y, 50%), rgba(167,139,250,0.18), transparent 58%)"
+            : "radial-gradient(circle at var(--stat-glow-x, 50%) var(--stat-glow-y, 50%), rgba(196,181,253,0.24), transparent 58%)",
+        }}
+      />
+
+      <div
+        className="relative text-[34px] font-extrabold leading-none"
+        style={{ color: isDark ? "#c4b5fd" : "#6d28d9" }}
+      >
+        <VariableProximity
+          label={`${display}${stat.suffix}`}
+          containerRef={cardRef}
+          radius={220}
+          falloff="linear"
+          fromFontVariationSettings="'wght' 260, 'opsz' 8"
+          toFontVariationSettings="'wght' 1000, 'opsz' 144"
+        />
+      </div>
+
+      <div
+        className="relative mt-3 text-[15px] font-semibold uppercase tracking-wide"
+        style={{ color: textMuted }}
+      >
+        <VariableProximity
+          label={stat.label}
+          containerRef={cardRef}
+          radius={205}
+          falloff="linear"
+          fromFontVariationSettings="'wght' 260, 'opsz' 8"
+          toFontVariationSettings="'wght' 1000, 'opsz' 144"
+        />
+      </div>
+    </div>
   );
 };
 
@@ -355,20 +456,12 @@ export default function Services({ isDark }: ServicesProps) {
         <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-20 pb-20">
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
             {DEMO_STATS.map((stat) => (
-              <div
+              <StatCard
                 key={stat.label}
-                className="group rounded-[20px] border bg-white p-6 text-center transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:scale-[1.018] hover:shadow-[0_20px_48px_rgba(15,23,42,0.10)] active:scale-[1.012] focus-visible:-translate-y-1 focus-visible:scale-[1.018] dark:bg-white/[0.03] last:col-span-2 last:mx-auto last:w-full lg:last:col-span-1 lg:last:mx-0 lg:last:w-auto"
-                style={{ borderColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" }}
-                tabIndex={0}
-              >
-                <div className="text-3xl font-extrabold transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035] group-focus-visible:scale-[1.035]" style={{ color: isDark ? "#a78bfa" : "#6d28d9" }}>
-                  <DemoCountUp value={stat.value} />
-                  {stat.suffix}
-                </div>
-                <div className="mt-2 text-xs font-semibold uppercase tracking-wide transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-[-1px] group-focus-visible:translate-y-[-1px]" style={{ color: textMuted }}>
-                  {stat.label}
-                </div>
-              </div>
+                stat={stat}
+                isDark={isDark}
+                textMuted={textMuted}
+              />
             ))}
           </div>
         </div>
