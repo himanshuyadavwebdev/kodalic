@@ -2,3 +2,7 @@
 .next/
 node_modules/
 tsconfig.tsbuildinfo
+.DS_Store
+supabase/.temp/
+frontend/reference-documents/
+*.pem
