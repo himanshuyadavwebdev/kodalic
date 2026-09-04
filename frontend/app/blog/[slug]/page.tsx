@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import { SITE_NAME, SITE_URL } from "../../seo";
 
 import { getPublicBlogPost } from "../../../lib/blog/get-public-blog-post";
 
@@ -150,6 +152,24 @@ interface PageProps {
   }>;
 }
 
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPublicBlogPost(slug);
+  if (!post) {
+    return { title: "Article Not Found", robots: { index: false, follow: false, googleBot: { index: false, follow: false } } };
+  }
+  const description = post.excerpt || post.content.replace(/\s+/g, " ").slice(0, 155);
+  const canonical = `/blog/${encodeURIComponent(post.slug)}`;
+  return {
+    title: post.title,
+    description,
+    alternates: { canonical },
+    openGraph: { type: "article", url: canonical, title: post.title, description, publishedTime: post.published_at || undefined, modifiedTime: post.updated_at || undefined },
+    twitter: { card: "summary_large_image", title: post.title, description },
+  };
+}
+
 export default async function BlogPostPage({
   params,
 }: PageProps) {
@@ -163,9 +183,21 @@ export default async function BlogPostPage({
 
   const category = blogPost.category;
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+      { "@type": "ListItem", position: 3, name: blogPost.title, item: `${SITE_URL}/blog/${encodeURIComponent(blogPost.slug)}` },
+    ],
+  };
+
   return (
     <main className="min-h-screen w-full bg-background font-[Inter]">
       <article className="mx-auto max-w-4xl px-6 pb-20 pt-10 sm:px-10 lg:px-12">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "BlogPosting", headline: blogPost.title, description: blogPost.excerpt || undefined, datePublished: blogPost.published_at || undefined, dateModified: blogPost.updated_at || blogPost.published_at || undefined, mainEntityOfPage: `${SITE_URL}/blog/${blogPost.slug}`, author: { "@type": "Organization", name: SITE_NAME }, publisher: { "@type": "Organization", name: SITE_NAME } }) }} />
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"

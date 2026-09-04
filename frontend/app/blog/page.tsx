@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "../../lib/supabase/server";
 
@@ -44,6 +45,14 @@ function getReadingTime(content: string) {
   return `${minutes} min read`;
 }
 
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Insights on web development, AI, automation, and digital products from Kodalic.",
+  alternates: { canonical: "/blog" },
+  openGraph: { title: "Blog | Kodalic", description: "Insights on web development, AI, automation, and digital products from Kodalic.", url: "/blog", type: "website" },
+  twitter: { card: "summary_large_image", title: "Blog | Kodalic", description: "Insights on web development, AI, automation, and digital products from Kodalic." },
+};
+
 export default async function BlogIndex() {
   const supabase = await createClient();
 
@@ -64,6 +73,7 @@ export default async function BlogIndex() {
     )
     .eq("status", "published")
     .not("published_at", "is", null)
+    .lte("published_at", new Date().toISOString())
     .order("published_at", { ascending: false });
 
   if (error) {
